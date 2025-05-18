@@ -1,4 +1,14 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-	"hello_world": "Hello, {name} from en!"
+	"greeting": "Hello!",
+	"welcome_back": "Welcome back!",
+	"login": "Login",
+	"register": "Register",
+	"noAccountYet": "No account yet?",
+	"forgotPassword": "Forgot password?",
+	"already_have_account": "Already have an account?",
+	"registerRedirectTip": "You can now login with your created account.",
+	"reset_password": "Reset password",
+	"password": "Password",
+	"nickname": "Nickname"
 }
