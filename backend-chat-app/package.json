@@ -1,0 +1,28 @@
+{
+  "name": "backend-chat-app",
+  "version": "1.0.0",
+  "description": "Projekt na przedmiot Bazy danych 2",
+  "homepage": "https://github.com/M-Ryba/ug-projekt-bazy-danych-2#readme",
+  "bugs": {
+    "url": "https://github.com/M-Ryba/ug-projekt-bazy-danych-2/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/M-Ryba/ug-projekt-bazy-danych-2.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node app.js"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.27.0",
+    "eslint": "^9.27.0",
+    "globals": "^16.1.0"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
