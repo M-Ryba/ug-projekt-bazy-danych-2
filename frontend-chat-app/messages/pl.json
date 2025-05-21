@@ -11,5 +11,8 @@
 	"reset_password": "Zresetuj hasło",
 	"password": "Hasło",
 	"invalid_email": "Wprowadź poprawny adres email",
-	"username": "Nazwa użytkownika"
+	"username": "Nazwa użytkownika",
+	"logout": "Wyloguj się",
+	"username_requirements": "Musi mieć od 3 do 30 znaków (litery, liczbylub myślniki)",
+	"password_requirements": "Musi zawierać więcej niż 8 znaków, w tym co najmniej jedną cyfrę, jedną małą literę i jedną wielką literę."
 }

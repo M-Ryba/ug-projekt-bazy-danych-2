@@ -11,5 +11,8 @@
 	"reset_password": "Reset password",
 	"password": "Password",
 	"invalid_email": "Enter valid email address",
-	"username": "Username"
+	"username": "Username",
+	"logout": "Logout",
+	"username_requirements": "Must be 3 to 30 characters (letters, numbers or dash)",
+	"password_requirements": "Must be more than 8 characters, including at least one number, one lowercase letter and one uppercase letter"
 }

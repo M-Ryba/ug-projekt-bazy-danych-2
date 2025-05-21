@@ -4,6 +4,7 @@
 	import { setLocale, getLocale } from '$lib/paraglide/runtime';
 	import { goto } from '$app/navigation';
 	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
+	import { m } from '$lib/paraglide/messages';
 
 	let { children } = $props();
 
@@ -33,7 +34,7 @@
 	</div>
 	<div id="navbarRight">
 		{#if loggedIn}
-			<button onclick={() => logout()}>Logout</button>
+			<button onclick={() => logout()}>{m.logout()}</button>
 			<span class="divider">|</span>
 		{/if}
 

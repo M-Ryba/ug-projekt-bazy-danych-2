@@ -26,7 +26,7 @@
 			title="Only letters, numbers or dash"
 			bind:value={username}
 		/>
-		<p class="validator-hint">Must be 3 to 30 characters (letters, numbers or dash)</p>
+		<p class="validator-hint">{m.username_requirements()}</p>
 
 		<label class="label" for="email">Email</label>
 		<input id="email" class="input validator" type="email" required placeholder="joe@example.com" bind:value={email} />
@@ -44,10 +44,7 @@
 			bind:value={password}
 		/>
 		<p class="validator-hint">
-			Must be more than 8 characters, including
-			<br />At least one number
-			<br />At least one lowercase letter
-			<br />At least one uppercase letter
+			{m.password_requirements()}
 		</p>
 
 		<button
