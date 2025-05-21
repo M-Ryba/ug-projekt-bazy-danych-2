@@ -4,11 +4,12 @@
 	"welcome_back": "Witaj z powrotem!",
 	"register": "Rejestracja",
 	"login": "Login",
-	"noAccountYet": "Jeszcze nie masz konta?",
+	"noAccountYet": "Nie masz jeszcze konta?",
 	"forgotPassword": "Zapomniałeś hasła?",
 	"already_have_account": "Masz jusz konto?",
 	"registerRedirectTip": "Możesz teraz zalogować się swoim stworzonym kontem.",
 	"reset_password": "Zresetuj hasło",
 	"password": "Hasło",
-	"nickname": "Nazwa użytkownika"
+	"invalid_email": "Wprowadź poprawny adres email",
+	"username": "Nazwa użytkownika"
 }

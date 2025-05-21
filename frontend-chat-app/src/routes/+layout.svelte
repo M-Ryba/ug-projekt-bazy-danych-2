@@ -1,7 +1,9 @@
 <script>
 	import '../app.css';
+	import './navbar.css';
 	import { setLocale, getLocale } from '$lib/paraglide/runtime';
 	import { goto } from '$app/navigation';
+	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 
 	let { children } = $props();
 
@@ -35,12 +37,13 @@
 			<span class="divider">|</span>
 		{/if}
 
+		<ThemeToggle />
+
 		<div id="langButtons">
 			{#each availableLanguages as language (language)}
-				<button
-					onclick={() => switchLocale(language)}
-					class:activeLocaleButton={currentLocale === language}>{language}</button
-				>
+				<button onclick={() => switchLocale(language)} class="btn btn-sm {currentLocale === language ? 'btn-active btn-success' : ''}">
+					{language}
+				</button>
 			{/each}
 		</div>
 	</div>

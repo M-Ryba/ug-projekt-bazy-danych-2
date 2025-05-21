@@ -10,5 +10,6 @@
 	"registerRedirectTip": "You can now login with your created account.",
 	"reset_password": "Reset password",
 	"password": "Password",
-	"nickname": "Nickname"
+	"invalid_email": "Enter valid email address",
+	"username": "Username"
 }
