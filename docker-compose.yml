@@ -30,15 +30,15 @@ services:
             - chat-app
 
     pgadmin:
-        image: pgadmin4:9.3.0
+        image: dpage/pgadmin4:9.3.0
         container_name: chat-app-pgadmin
         depends_on:
             - postgres
         restart: unless-stopped
         environment:
-            - PGADMIN_DEFAULT_EMAIL: myemail@example.com
-            - PGADMIN_DEFAULT_PASSWORD: examplepassword
-            - PGADMIN_CONFIG_SERVER_MODE: "False"
+            - PGADMIN_DEFAULT_EMAIL=myemail@example.com
+            - PGADMIN_DEFAULT_PASSWORD=examplepassword
+            - PGADMIN_CONFIG_SERVER_MODE=False
         ports:
             - 8091:80
         networks:
@@ -64,3 +64,7 @@ networks:
     chat-app:
         external: false
         name: chat-app
+
+volumes:
+    chat-app-postgres:
+    chat-app-mongodb:
