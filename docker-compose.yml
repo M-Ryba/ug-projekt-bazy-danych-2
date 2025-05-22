@@ -29,18 +29,16 @@ services:
         networks:
             - chat-app
 
-    pgadmin:
-        image: pgadmin4:9.3.0
-        container_name: chat-app-pgadmin
+    adminer:
+        image: adminer:5.3.0
+        container_name: chat-app-adminer
         depends_on:
             - postgres
         restart: unless-stopped
         environment:
-            - PGADMIN_DEFAULT_EMAIL: myemail@example.com
-            - PGADMIN_DEFAULT_PASSWORD: examplepassword
-            - PGADMIN_CONFIG_SERVER_MODE: "False"
+            - ADMINER_DEFAULT_SERVER=postgres
         ports:
-            - 8091:80
+            - 8091:8080
         networks:
             - chat-app
 
