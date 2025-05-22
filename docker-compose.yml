@@ -1,22 +1,22 @@
 services:
     postgres:
         image: postgres:17.5
-        container_name: chat-app-postgres
+        container_name: chatapp_postgres
         restart: always
         shm_size: 128mb
         environment:
             - POSTGRES_USER=${POSTGRES_USER}
             - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-            - POSTGRES_DB=chat_app
+            - POSTGRES_DB=chatapp
         ports:
             - "5432:5432"
         volumes:
-            - chat-app-postgres:/var/lib/postgresql/data
+            - postgres_data:/var/lib/postgresql/data
         networks:
-            - chat-app
+            - chatapp
     mongo:
-        image: mongo:latest
-        container_name: chat-app-mongodb
+        image: mongo:8.0.9
+        container_name: chatapp_mongodb
         restart: always
         shm_size: 512mb
         environment:
@@ -25,44 +25,61 @@ services:
         ports:
             - "27017:27017"
         volumes:
-            - chat-app-mongodb:/data/db
+            - -mongodb_data:/data/db
         networks:
-            - chat-app
+            - chatapp
 
     adminer:
         image: adminer:5.3.0
-        container_name: chat-app-adminer
+        container_name: chatapp_adminer
         depends_on:
             - postgres
         restart: unless-stopped
         environment:
             - ADMINER_DEFAULT_SERVER=postgres
         ports:
-            - 8091:8080
+            - 8090:8080
         networks:
-            - chat-app
+            - chatapp
 
     mongo-express:
         image: mongo-express
-        container_name: chat-app-mongo-express
+        container_name: chatapp_mongo-express
         depends_on:
             - mongo
         restart: unless-stopped
         ports:
-            - 8092:8081
+            - 8091:8081
         environment:
-            ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_USER}
-            ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_PASSWORD}
-            ME_CONFIG_MONGODB_URL: mongodb://mongo:mongo@mongo:27017/
-            ME_CONFIG_BASICAUTH: false
+            - ME_CONFIG_MONGODB_ADMINUSERNAME=${MONGO_USER}
+            - ME_CONFIG_MONGODB_ADMINPASSWORD=${MONGO_PASSWORD}
+            - ME_CONFIG_MONGODB_SERVER=mongo
+            - ME_CONFIG_MONGODB_PORT=27017
+            - ME_CONFIG_BASICAUTH=false
         networks:
-            - chat-app
+            - chatapp
+
+    keycloak:
+        image: keycloak/keycloak:26.2
+        container_name: chatapp_keycloack
+        restart: always
+        environment:
+            - KEYCLOAK_ADMIN=${KEYCLOAK_USER}
+            - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_PASSWORD}
+        ports:
+            - 8092:8082
+        volumes:
+            - keycloak_data:/opt/keycloak/data
+        networks:
+            - chatapp
+        command: ["start-dev", "--http-port", "8082"]
 
 networks:
-    chat-app:
+    chatapp:
         external: false
-        name: chat-app
+        name: chatapp
 
 volumes:
-    chat-app-postgres:
-    chat-app-mongodb:
+    postgres_data:
+    mongodb_data:
+    keycloack_data:
