@@ -62,3 +62,7 @@ networks:
     chat-app:
         external: false
         name: chat-app
+
+volumes:
+    chat-app-postgres:
+    chat-app-mongodb:
