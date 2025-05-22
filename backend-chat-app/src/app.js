@@ -1,17 +1,33 @@
-import 'dotenv/config'
-import express from 'express'
+require('dotenv').config();
+const express = require('express');
+const { PrismaClient } = require('@prisma/client');
 
-import { add, subtract } from './util.js'
+const app = express();
+const prisma = new PrismaClient();
 
-console.log(add(5, 5))
-console.log(subtract(10, 5))
-
-const app = express()
+app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.send('Hello World')
-})
+  res.send('Hello World');
+});
+
+app.get('/users', async (req, res) => {
+  const users = await prisma.user.findMany();
+  res.json(users);
+});
+
+app.post(`/signup`, async (req, res) => {
+  const { name, email } = req.body;
+
+  const result = await prisma.user.create({
+    data: {
+      name,
+      email
+    }
+  });
+  res.json(result);
+});
 
 app.listen(process.env.PORT, () => {
-  console.log(`Server is running on port ${process.env.PORT}`)
-})
+  console.log(`Server is running on port ${process.env.PORT}`);
+});
