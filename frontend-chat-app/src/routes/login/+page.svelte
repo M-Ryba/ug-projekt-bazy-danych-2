@@ -8,6 +8,9 @@
 </script>
 
 <h1>{m.welcome_back()}</h1>
+{#if $page.data?.session?.user}
+	<h1>{$page.data.session.user.name}</h1>
+{/if}
 
 <div class="authForm">
 	<fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">

@@ -3,15 +3,15 @@
 	import './navbar.css';
 	import { setLocale, getLocale } from '$lib/paraglide/runtime';
 	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 	import { m } from '$lib/paraglide/messages';
+	import { SignOut, SignIn } from '@auth/sveltekit/components';
 
 	let { children } = $props();
 
 	const availableLanguages = ['en', 'pl'];
 	let currentLocale = $derived(getLocale());
-
-	let loggedIn = false; // Placeholder
 
 	function switchLocale(locale) {
 		if (availableLanguages.includes(locale)) {
@@ -20,12 +20,6 @@
 			console.error('Selected locale not available.');
 		}
 	}
-
-	function logout() {
-		// TODO: Logout logic
-		console.log('Logging out...');
-		goto('/');
-	}
 </script>
 
 <div id="navbar">
@@ -33,9 +27,13 @@
 		<button id="appName" onclick={() => goto('/')}>ChatApp</button>
 	</div>
 	<div id="navbarRight">
-		{#if loggedIn}
-			<button onclick={() => logout()}>{m.logout()}</button>
-			<span class="divider">|</span>
+		<!-- if user is logged in -->
+		{#if $page.data?.session?.user}
+			<SignOut><button class="btn">{m.logout()}</button></SignOut>
+		{:else}
+			<SignIn provider="keycloak">
+				<button class="btn">{m.login}</button>
+			</SignIn>
 		{/if}
 
 		<ThemeToggle />
