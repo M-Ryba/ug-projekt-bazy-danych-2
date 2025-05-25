@@ -1,18 +1,11 @@
 import express from 'express';
+import { checkJwt } from '../authMiddleware.js';
 
 import userRouter from './users.js';
 
-// Middleware for restricting API access to authenticated users
-function requireAuth(req, res, next) {
-  if (!res.locals.session) {
-    return res.status(401).json({ message: 'Unauthorized' });
-  }
-  next();
-}
-
 const router = express.Router();
-
-router.use(requireAuth);
+// Middleware to check JWT authentication for all API routes
+router.use(checkJwt);
 
 router.get('/', (req, res) => {
   res.send('Welcome to the ChatApp API');
