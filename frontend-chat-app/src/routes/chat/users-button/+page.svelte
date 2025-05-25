@@ -1,19 +1,12 @@
 <script>
 	import { enhance } from '$app/forms';
+	import { page } from '$app/stores';
 
-	let users = $state([]);
-
-	function handleSubmit() {
-		return async ({ result }) => {
-			if (result.type === 'success') {
-				users = result.data.users;
-			}
-		};
-	}
+	const users = $derived($page.form?.users || []);
 </script>
 
-<form method="POST" action="?/getUsers" use:enhance={handleSubmit}>
-	<button class="btn btn-accent">Get all users</button>
+<form method="POST" action="?/getUsers" use:enhance>
+	<button class="btn btn-accent mb-10">Get all users</button>
 </form>
 
 {#if users.length > 0}
