@@ -9,7 +9,7 @@ export const checkJwt = expressjwt({
     jwksRequestsPerMinute: 5,
     jwksUri: `${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/certs`
   }),
-  audience: process.env.KEYCLOAK_CLIENT_ID,
+  audience: 'account',
   issuer: process.env.KEYCLOAK_ISSUER,
   algorithms: ['RS256']
 });
