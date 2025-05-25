@@ -15,11 +15,12 @@
 }
 
 #navbarRight > * {
-	margin-right: 0.5rem;
+	margin-right: 0.8rem;
 }
 
 #appName {
 	font-size: 1.75rem;
+	margin-left: 0.8rem;
 }
 
 #appName:hover {

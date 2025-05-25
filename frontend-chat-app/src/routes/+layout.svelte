@@ -6,7 +6,7 @@
 	import { page } from '$app/stores';
 	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 	import { m } from '$lib/paraglide/messages';
-	import { SignOut } from '@auth/sveltekit/components';
+	import { signOut } from '@auth/sveltekit/client';
 
 	let { children } = $props();
 
@@ -29,7 +29,9 @@
 	<div id="navbarRight">
 		<!-- if user is logged in -->
 		{#if $page.data?.session?.user}
-			<SignOut><button class="btn">{m.logout()}</button></SignOut>
+			<button class="btn btn-secondary btn-sm" onclick={() => signOut('keycloak')}>
+				{m.logout()}
+			</button>
 		{/if}
 
 		<ThemeToggle />

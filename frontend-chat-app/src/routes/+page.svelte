@@ -1,10 +1,10 @@
 <script>
 	import { m } from '$lib/paraglide/messages';
-	import { SignIn } from '@auth/sveltekit/components';
+	import { signIn } from '@auth/sveltekit/client';
 </script>
 
-<h1>{m.greeting()}</h1>
+<h1 class="mt-10 mb-8">{m.greeting()}</h1>
 
-<SignIn provider="keycloak">
-	<button class="btn">{m.login()}</button>
-</SignIn>
+<button class="btn btn-xl btn-primary" onclick={() => signIn('keycloak')}>
+	{m.login()}
+</button>
