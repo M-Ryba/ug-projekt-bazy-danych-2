@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
+import cors from 'cors';
 
 import apiRouter from './routes/api.js';
 
@@ -7,6 +8,14 @@ const app = express();
 
 // Middleware to parse JSON requests
 app.use(express.json());
+
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    credentials: true
+  })
+);
 
 app.get('/', (req, res) => {
   res.send('Please use /api endpoint to access the API');
