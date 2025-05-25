@@ -1,6 +1,6 @@
 import express from 'express';
 
-import userRouter from './api/users.js';
+import userRouter from './users.js';
 
 // Middleware for restricting API access to authenticated users
 function requireAuth(req, res, next) {
