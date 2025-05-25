@@ -6,7 +6,7 @@
 	import { page } from '$app/stores';
 	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 	import { m } from '$lib/paraglide/messages';
-	import { SignOut, SignIn } from '@auth/sveltekit/components';
+	import { SignOut } from '@auth/sveltekit/components';
 
 	let { children } = $props();
 
@@ -30,10 +30,6 @@
 		<!-- if user is logged in -->
 		{#if $page.data?.session?.user}
 			<SignOut><button class="btn">{m.logout()}</button></SignOut>
-		{:else}
-			<SignIn provider="keycloak">
-				<button class="btn">{m.login}</button>
-			</SignIn>
 		{/if}
 
 		<ThemeToggle />

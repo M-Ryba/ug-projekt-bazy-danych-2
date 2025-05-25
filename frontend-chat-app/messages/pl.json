@@ -1,7 +1,6 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
 	"greeting": "Witaj!",
-	"welcome_back": "Witaj z powrotem!",
 	"register": "Rejestracja",
 	"login": "Login",
 	"noAccountYet": "Nie masz jeszcze konta?",
