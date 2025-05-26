@@ -4,9 +4,9 @@
 	import { setLocale, getLocale } from '$lib/paraglide/runtime';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 	import { m } from '$lib/paraglide/messages';
 	import { signOut } from '@auth/sveltekit/client';
+	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 
 	let { children } = $props();
 

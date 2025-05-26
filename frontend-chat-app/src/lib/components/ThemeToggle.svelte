@@ -1,6 +1,19 @@
+<script>
+	import { browser } from '$app/environment';
+
+	let isDark = $state(browser ? JSON.parse(localStorage.getItem('isDark') || 'false') : false);
+
+	$effect(() => {
+		if (browser) {
+			localStorage.setItem('isDark', JSON.stringify(isDark));
+			document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+		}
+	});
+</script>
+
 <label class="swap swap-rotate">
 	<!-- this hidden checkbox controls the state -->
-	<input type="checkbox" value="light" class="hidden" />
+	<input type="checkbox" bind:checked={isDark} class="hidden" />
 
 	<!-- sun icon -->
 	<svg class="swap-on h-7 w-7 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
