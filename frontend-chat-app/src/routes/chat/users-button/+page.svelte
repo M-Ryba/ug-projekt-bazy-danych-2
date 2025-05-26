@@ -1,8 +1,8 @@
 <script>
 	import { enhance } from '$app/forms';
-	import { page } from '$app/stores';
+	const { form } = $props();
 
-	const users = $derived($page.form?.users || []);
+	const users = $derived(form?.users || []);
 </script>
 
 <form method="POST" action="?/getUsers" use:enhance>
