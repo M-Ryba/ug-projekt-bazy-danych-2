@@ -7,7 +7,12 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 		Keycloak({
 			clientId: KEYCLOAK_CLIENT_ID,
 			clientSecret: KEYCLOAK_CLIENT_SECRET,
-			issuer: KEYCLOAK_ISSUER
+			issuer: KEYCLOAK_ISSUER,
+			authorization: {
+				params: {
+					prompt: 'login'
+				}
+			}
 		})
 	],
 	callbacks: {
