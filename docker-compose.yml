@@ -70,6 +70,7 @@ services:
             - 8092:8082
         volumes:
             - keycloak_data:/opt/keycloak/data
+            - ./chatapp-realm.json:/opt/keycloak/data/import/chatapp-realm.json
         networks:
             - chatapp
         command: ["start-dev", "--http-port", "8082"]
