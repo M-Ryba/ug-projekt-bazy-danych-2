@@ -29,6 +29,7 @@
 	<div id="navbarRight">
 		<!-- if user is logged in -->
 		{#if $page.data?.session?.user}
+			<span class="username">{$page.data.session.user.name}</span>
 			<button class="btn btn-secondary btn-sm" onclick={() => signOut('keycloak')}>
 				{m.logout()}
 			</button>
