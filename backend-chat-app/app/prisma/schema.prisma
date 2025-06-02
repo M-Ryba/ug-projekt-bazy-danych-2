@@ -1,0 +1,115 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int      @id @default(autoincrement())
+  username    String   @unique
+  email       String   @unique
+  displayName String
+  profile     Profile?
+  privacy     PrivacySettings?
+  contacts    Contact[]        @relation("UserContacts")
+  blocked     BlockedContact[] @relation("UserBlocked")
+  chats       ChatMember[]
+  notifications Notification[]
+  status      UserStatus?
+  emailVerification EmailVerification?
+
+  Contact Contact[] @relation("ContactOf")
+
+  BlockedContact BlockedContact[] @relation("BlockedOf")
+}
+
+model Profile {
+  id        Int    @id @default(autoincrement())
+  userId    Int    @unique
+  avatarUrl String?
+  bio       String?
+  // inne dane profilu
+  user      User   @relation(fields: [userId], references: [id])
+}
+
+model PrivacySettings {
+  id                Int    @id @default(autoincrement())
+  userId            Int    @unique
+  showStatus        Boolean @default(true)
+  allowMessagesFrom String  @default("all") // all, contacts, none
+  // inne ustawienia prywatności
+  user              User   @relation(fields: [userId], references: [id])
+}
+
+model Contact {
+  id        Int   @id @default(autoincrement())
+  userId    Int
+  contactId Int
+  createdAt DateTime @default(now())
+  user      User @relation("UserContacts", fields: [userId], references: [id])
+  contact   User @relation("ContactOf", fields: [contactId], references: [id])
+}
+
+model BlockedContact {
+  id        Int   @id @default(autoincrement())
+  userId    Int
+  blockedId Int
+  createdAt DateTime @default(now())
+  user      User @relation("UserBlocked", fields: [userId], references: [id])
+  blocked   User @relation("BlockedOf", fields: [blockedId], references: [id])
+}
+
+model Chat {
+  id          Int    @id @default(autoincrement())
+  isGroup     Boolean @default(false)
+  name        String?
+  createdById Int
+  createdAt   DateTime @default(now())
+  members     ChatMember[]
+}
+
+model ChatMember {
+  id      Int   @id @default(autoincrement())
+  chatId  Int
+  userId  Int
+  joinedAt DateTime @default(now())
+  isAdmin Boolean @default(false)
+  chat    Chat @relation(fields: [chatId], references: [id])
+  user    User @relation(fields: [userId], references: [id])
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  type      String
+  content   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model EmailVerification {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  token     String
+  expiresAt DateTime
+  verified  Boolean  @default(false)
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model UserStatus {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  status    String   // online, offline, busy
+  updatedAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
