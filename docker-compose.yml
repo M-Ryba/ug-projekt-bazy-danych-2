@@ -75,6 +75,33 @@ services:
             - chatapp
         command: ["start-dev", "--http-port", "8082"]
 
+    backend:
+        image: ./backend-chat-app
+        container_name: chatapp_backend
+        depends_on:
+            - postgres
+            - mongo
+        restart: always
+        environment:
+            # - TODO
+        ports:
+            - 8093:8093
+        networks:
+            - chatapp
+
+    frontend:
+        image: ./frontend-chat-app
+        container_name: chatapp_frotend
+        depends_on:
+            - backend
+        restart: always
+        environment:
+            # - TODO
+        ports:
+            - 80:4173
+        networks:
+            - chatapp
+
 networks:
     chatapp:
         external: false
