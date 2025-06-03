@@ -15,6 +15,7 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 			}
 		})
 	],
+	trustHost: true,
 	callbacks: {
 		// Adding keycloak tokens to the session and jwt
 		async session({ session, token }) {
