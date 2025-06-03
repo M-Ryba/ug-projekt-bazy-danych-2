@@ -83,7 +83,12 @@ services:
             - mongo
         restart: always
         environment:
-            # - TODO
+            - PORT=${BACKEND_PORT}
+            - FRONTEND_URL=${FRONTEND_URL}
+            - DATABASE_URL=${DATABASE_URL}
+            - KEYCLOAK_ISSUER=${KEYCLOAK_ISSUER}
+            - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
+            - AUTH_SECRET=${AUTH_SECRET}
         ports:
             - 8093:8083
         networks:
@@ -96,7 +101,11 @@ services:
             - backend
         restart: always
         environment:
-            # - TODO
+            - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET}
+            - BACKEND_URL=${BACKEND_URL}
+            - KEYCLOAK_ISSUER=${KEYCLOAK_ISSUER}
+            - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
+            - AUTH_SECRET=${AUTH_SECRET}
         ports:
             - 80:4173
         networks:
