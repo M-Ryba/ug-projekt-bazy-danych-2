@@ -5,7 +5,7 @@ ENV NODE_ENV=production
 ADD ./app /usr/src/app
 WORKDIR /usr/src/app
 
-RUN npm install
+RUN npm ci
 
 ENTRYPOINT ["node"]
 CMD ["src/app.js"]
