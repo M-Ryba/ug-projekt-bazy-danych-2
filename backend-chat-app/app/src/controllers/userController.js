@@ -1,4 +1,4 @@
-import prisma from '@/prisma/client.js';
+import prisma from '../../prisma/client.js';
 
 export const getAllUsers = async (req, res) => {
   try {
@@ -6,29 +6,6 @@ export const getAllUsers = async (req, res) => {
     res.json(users);
   } catch (error) {
     res.status(500).json({ message: 'Error while fetching users', error: error.message });
-  }
-};
-
-export const createUser = async (req, res) => {
-  try {
-    const { name, email } = req.body;
-
-    if (!name || !email) {
-      return res.status(400).json({ message: 'Missing required fields: name and email are required' });
-    }
-
-    const result = await prisma.user.create({
-      data: {
-        name,
-        email
-      }
-    });
-    res.status(201).json(result);
-  } catch (error) {
-    if (error.code === 'P2002') {
-      return res.status(409).json({ message: 'User with this email already exists' });
-    }
-    res.status(500).json({ message: 'Error while creating user', error: error.message });
   }
 };
 

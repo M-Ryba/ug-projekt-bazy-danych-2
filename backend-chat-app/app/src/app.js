@@ -1,7 +1,10 @@
 import 'dotenv/config';
-import 'module-alias/register'; // Global aliases
 import express from 'express';
 import cors from 'cors';
+
+// Connect to MongoDB
+import connectMongoose from '../mongoose/connection.js';
+await connectMongoose();
 
 import apiRouter from './routes/api.js';
 

@@ -85,8 +85,8 @@ services:
         environment:
             - PORT=${BACKEND_PORT}
             - FRONTEND_URL=${FRONTEND_URL}
-            - POSTGRES_URL=${DATABASE_URL}
-            - MONGO_URL=${DATABASE_URL}
+            - POSTGRES_URI="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_URL}"
+            - MONGO_URI="mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_URL}"
             - KEYCLOAK_ISSUER=${KEYCLOAK_ISSUER}
             - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
             - AUTH_SECRET=${AUTH_SECRET}
