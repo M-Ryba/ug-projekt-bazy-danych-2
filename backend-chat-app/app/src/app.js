@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import 'module-alias/register'; // Global aliases
 import express from 'express';
 import cors from 'cors';
 
