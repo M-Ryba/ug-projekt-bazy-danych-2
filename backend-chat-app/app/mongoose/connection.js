@@ -4,7 +4,7 @@ let reconnectTimeout = null;
 
 const connectMongoose = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URL);
+    await mongoose.connect(process.env.MONGO_URI);
     console.log('✅ Mongoose connected');
     if (reconnectTimeout) {
       clearTimeout(reconnectTimeout);
