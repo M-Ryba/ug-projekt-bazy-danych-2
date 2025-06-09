@@ -66,6 +66,7 @@ services:
         environment:
             - KEYCLOAK_ADMIN=${KEYCLOAK_USER}
             - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_PASSWORD}
+            - KC_HTTP_PORT=8082
         ports:
             - 8092:8082
         volumes:
@@ -73,7 +74,7 @@ services:
             - ./chatapp-realm.json:/opt/keycloak/data/import/chatapp-realm.json
         networks:
             - chatapp
-        command: ["start-dev", "--http-port=8082", "--import-realm"]
+        command: ["start-dev", "--import-realm"]
 
     # backend:
     #     build: ./backend-chat-app
