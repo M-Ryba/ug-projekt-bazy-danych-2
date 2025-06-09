@@ -61,7 +61,7 @@ services:
 
     keycloak:
         image: keycloak/keycloak:26.2
-        container_name: chatapp_keycloack
+        container_name: chatapp_keycloak
         restart: always
         environment:
             - KEYCLOAK_ADMIN=${KEYCLOAK_USER}
