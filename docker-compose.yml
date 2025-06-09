@@ -76,7 +76,7 @@ services:
         command: ["start-dev", "--http-port", "8082"]
 
     backend:
-        image: ./backend-chat-app
+        build: ./backend-chat-app
         container_name: chatapp_backend
         depends_on:
             - postgres
@@ -96,7 +96,7 @@ services:
             - chatapp
 
     frontend:
-        image: ./frontend-chat-app
+        build: ./frontend-chat-app
         container_name: chatapp_frotend
         depends_on:
             - backend
