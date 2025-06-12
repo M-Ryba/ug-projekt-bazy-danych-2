@@ -14,8 +14,101 @@ datasource db {
 }
 
 model User {
-  id          Int      @id @default(autoincrement())
-  username    String   @unique
-  email       String   @unique
-  displayName String
+  id             Int       @id @default(autoincrement())
+  username       String    @unique
+  email          String    @unique
+  emailVerified  Boolean   @default(false)
+  displayName    String
+  avatarUrl      String?
+  contacts       Contact[] @relation("UserContacts")
+  contactOf      Contact[] @relation("UserContactOf")
+  blockedUsers   Block[]   @relation("UserBlocks")
+  blockedBy      Block[]   @relation("UserBlockedBy")
+  chats          ChatMember[]
+  ownedChats     Chat[]
+  notifications  Notification[]
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  // Privacy settings
+  showStatus     Boolean   @default(true)
+  allowInvites   Boolean   @default(true)
+}
+
+model Contact {
+  id         Int    @id @default(autoincrement())
+  ownerId    Int
+  contactId  Int
+  isFavorite Boolean @default(false)
+  owner      User   @relation("UserContacts", fields: [ownerId], references: [id])
+  contact    User   @relation("UserContactOf", fields: [contactId], references: [id])
+  createdAt  DateTime @default(now())
+
+  @@unique([ownerId, contactId])
+}
+
+model Block {
+  id         Int    @id @default(autoincrement())
+  blockerId  Int
+  blockedId  Int
+  blocker    User   @relation("UserBlocks", fields: [blockerId], references: [id])
+  blocked    User   @relation("UserBlockedBy", fields: [blockedId], references: [id])
+  createdAt  DateTime @default(now())
+
+  @@unique([blockerId, blockedId])
+}
+
+model Chat {
+  id          Int         @id @default(autoincrement())
+  type        ChatType
+  name        String?
+  description String?
+  ownerId     Int?
+  owner       User?       @relation(fields: [ownerId], references: [id])
+  members     ChatMember[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([type])
+}
+
+model ChatMember {
+  id        Int    @id @default(autoincrement())
+  chatId    Int
+  userId    Int
+  role      ChatRole @default(MEMBER)
+  joinedAt  DateTime @default(now())
+  chat      Chat   @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([chatId, userId])
+  @@index([role])
+}
+
+model Notification {
+  id        Int    @id @default(autoincrement())
+  userId    Int
+  type      NotificationType
+  content   String
+  isRead    Boolean @default(false)
+  createdAt DateTime @default(now())
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+}
+
+enum ChatType {
+  PRIVATE
+  GROUP
+}
+
+enum ChatRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+enum NotificationType {
+  MESSAGE
+  INVITE
+  SYSTEM
 }
