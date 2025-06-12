@@ -37,6 +37,7 @@
 		"@auth/sveltekit": "^1.9.2",
 		"@inlang/paraglide-js": "^2.0.0",
 		"@sveltejs/adapter-node": "^5.2.12",
-		"dotenv": "^16.5.0"
+		"dotenv": "^16.5.0",
+		"jwt-decode": "^4.0.0"
 	}
 }

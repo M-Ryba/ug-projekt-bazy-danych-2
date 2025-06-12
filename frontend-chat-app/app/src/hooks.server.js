@@ -22,6 +22,14 @@ async function authorizationHandle({ event, resolve }) {
 		}
 	}
 
+	// Protect /admin route (users with admin role only)
+	if (event.url.pathname.startsWith('/admin')) {
+		const session = await event.locals.auth();
+		if (!session || !session.roles?.includes('admin')) {
+			throw redirect(303, '/');
+		}
+	}
+
 	// If the request is still here, just proceed as normally
 	return resolve(event);
 }

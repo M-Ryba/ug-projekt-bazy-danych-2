@@ -1,5 +1,6 @@
 import { SvelteKitAuth } from '@auth/sveltekit';
 import Keycloak from '@auth/sveltekit/providers/keycloak';
+import { jwtDecode } from 'jwt-decode';
 import { KEYCLOAK_CLIENT_ID, KEYCLOAK_CLIENT_SECRET, KEYCLOAK_ISSUER } from '$env/static/private';
 
 async function refreshKeycloakToken(refresh_token) {
@@ -33,10 +34,15 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 	],
 	trustHost: true,
 	callbacks: {
-		// Adding keycloak tokens to the session and jwt
+		// Add keycloak tokens to the session and jwt
 		async session({ session, token }) {
 			session.access_token = token.access_token;
 			session.id_token = token.id_token;
+			// Get user roles from access_token
+			if (token.access_token) {
+				const payload = jwtDecode(token.access_token);
+				session.roles = payload.realm_access?.roles || [];
+			}
 			return session;
 		},
 		async jwt({ token, account }) {
