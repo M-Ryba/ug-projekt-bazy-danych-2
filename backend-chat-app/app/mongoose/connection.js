@@ -18,7 +18,7 @@ const connectMongoose = async () => {
 
 // Reconnect on error
 mongoose.connection.on('disconnected', () => {
-  console.error('❌ Mongoose disconnected! Trying to reconnect in 5 seconds...');
+  console.error('🔄 Mongoose disconnected! Trying to reconnect in 5 seconds...');
   if (!reconnectTimeout) {
     reconnectTimeout = setTimeout(() => {
       connectMongoose();
