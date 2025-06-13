@@ -1,12 +1,15 @@
 import express from 'express';
-import { getAllUsers, deleteUser, getStats } from '../controllers/adminController.js';
+import { getAllUsers, getUserById, updateUser, deleteUser, getStats } from '../controllers/adminController.js';
+
 const router = express.Router();
 
-// GET /api/admin/users
+// User management
 router.get('/users', getAllUsers);
-// DELETE /api/admin/users/:userId
+router.get('/users/:userId', getUserById);
+router.put('/users/:userId', updateUser);
 router.delete('/users/:userId', deleteUser);
-// GET /api/admin/stats
+
+// System stats
 router.get('/stats', getStats);
 
 export default router;
