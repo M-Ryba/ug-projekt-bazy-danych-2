@@ -1,12 +1,22 @@
 import express from 'express';
-import { getNotifications, markNotificationRead, markAllNotificationsRead } from '../controllers/notificationsController.js';
+import {
+  getNotifications,
+  getNotificationById,
+  createNotification,
+  markAsRead,
+  markAllAsRead,
+  deleteNotification,
+  getUnreadCount
+} from '../controllers/notificationsController.js';
+
 const router = express.Router();
 
-// GET /api/notifications
 router.get('/', getNotifications);
-// PATCH /api/notifications/:notificationId/read
-router.patch('/:notificationId/read', markNotificationRead);
-// PATCH /api/notifications/read-all
-router.patch('/read-all', markAllNotificationsRead);
+router.get('/unread-count', getUnreadCount);
+router.get('/:id', getNotificationById);
+router.post('/', createNotification);
+router.patch('/mark-read', markAsRead);
+router.patch('/mark-all-read', markAllAsRead);
+router.delete('/:id', deleteNotification);
 
 export default router;
