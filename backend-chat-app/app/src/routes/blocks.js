@@ -1,10 +1,10 @@
 import express from 'express';
-import { blockUser, unblockUser } from '../controllers/blocksController.js';
+import { getBlocks, blockUser, unblockUser } from '../controllers/blocksController.js';
+
 const router = express.Router();
 
-// POST /api/blocks
+router.get('/', getBlocks);
 router.post('/', blockUser);
-// DELETE /api/blocks/:blockedId
-router.delete('/:blockedId', unblockUser);
+router.delete('/:id', unblockUser);
 
 export default router;
