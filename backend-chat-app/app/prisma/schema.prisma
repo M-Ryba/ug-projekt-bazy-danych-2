@@ -27,6 +27,7 @@ model User {
   chats          ChatMember[]
   ownedChats     Chat[]
   notifications  Notification[]
+  isAdmin        Boolean   @default(false)
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
   // Privacy settings
