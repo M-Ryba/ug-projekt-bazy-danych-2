@@ -8,7 +8,7 @@
 {#if users.length > 0}
 	<ul>
 		{#each users as user (user.email)}
-			<li>{user.name} ({user.email})</li>
+			<li>{user.username} ({user.email})</li>
 		{/each}
 	</ul>
 {:else}

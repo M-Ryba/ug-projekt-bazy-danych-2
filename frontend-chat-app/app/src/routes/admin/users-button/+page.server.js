@@ -4,7 +4,7 @@ export const actions = {
 	getUsers: async ({ locals }) => {
 		const session = await locals.auth();
 
-		const fetchUsers = await fetch(`${BACKEND_URL}/api/users`, {
+		const fetchUsers = await fetch(`${BACKEND_URL}/api/admin/users`, {
 			method: 'GET',
 			headers: {
 				Authorization: `Bearer ${session.access_token}`
