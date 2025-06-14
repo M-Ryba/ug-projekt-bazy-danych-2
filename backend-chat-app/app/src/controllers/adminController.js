@@ -1,16 +1,10 @@
 import prisma from '../../prisma/client.js';
 import Message from '../../mongoose/models/message.js';
 import UserStatus from '../../mongoose/models/UserStatus.js';
-import { body, param, query, validationResult } from 'express-validator';
+import { body, param, validationResult } from 'express-validator';
 
 // Validation middleware
 const validateUserId = [param('userId').isInt({ min: 1 }).withMessage('User ID must be a positive integer')];
-
-const validateGetUsers = [
-  query('page').optional().isInt({ min: 1 }).withMessage('Page must be a positive integer'),
-  query('limit').optional().isInt({ min: 1, max: 100 }).withMessage('Limit must be between 1 and 100'),
-  query('search').optional().isLength({ min: 1 }).withMessage('Search term must not be empty')
-];
 
 const validateUserUpdate = [
   body('username').optional().isLength({ min: 3, max: 50 }).withMessage('Username must be between 3 and 50 characters'),
@@ -31,59 +25,10 @@ const handleValidationErrors = (req, res, next) => {
 };
 
 export const getAllUsers = [
-  ...validateGetUsers,
-  handleValidationErrors,
   async (req, res) => {
     try {
-      const { page = 1, limit = 20, search } = req.query;
-      const skip = (page - 1) * limit;
-
-      const where = search
-        ? {
-            OR: [
-              { username: { contains: search, mode: 'insensitive' } },
-              { email: { contains: search, mode: 'insensitive' } },
-              { displayName: { contains: search, mode: 'insensitive' } }
-            ]
-          }
-        : {};
-
-      const [users, total] = await Promise.all([
-        prisma.user.findMany({
-          where,
-          select: {
-            id: true,
-            username: true,
-            email: true,
-            displayName: true,
-            emailVerified: true,
-            showStatus: true,
-            allowInvites: true,
-            createdAt: true,
-            updatedAt: true,
-            _count: {
-              select: {
-                chats: true,
-                notifications: true
-              }
-            }
-          },
-          orderBy: { createdAt: 'desc' },
-          skip,
-          take: parseInt(limit)
-        }),
-        prisma.user.count({ where })
-      ]);
-
-      res.json({
-        users,
-        pagination: {
-          page: parseInt(page),
-          limit: parseInt(limit),
-          total,
-          pages: Math.ceil(total / limit)
-        }
-      });
+      const users = await prisma.user.findMany();
+      res.json(users);
     } catch (error) {
       res.status(500).json({ message: 'Error while fetching users', error: error.message });
     }
