@@ -30,32 +30,7 @@ const handleValidationErrors = (req, res, next) => {
   next();
 };
 
-// Middleware to check admin permissions
-const checkAdminPermissions = async (req, res, next) => {
-  try {
-    const userId = req.user?.id;
-
-    if (!userId) {
-      return res.status(401).json({ message: 'User not authenticated' });
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { isAdmin: true }
-    });
-
-    if (!user?.isAdmin) {
-      return res.status(403).json({ message: 'Admin access required' });
-    }
-
-    next();
-  } catch (error) {
-    res.status(500).json({ message: 'Error checking admin permissions', error: error.message });
-  }
-};
-
 export const getAllUsers = [
-  checkAdminPermissions,
   ...validateGetUsers,
   handleValidationErrors,
   async (req, res) => {
@@ -116,7 +91,6 @@ export const getAllUsers = [
 ];
 
 export const getUserById = [
-  checkAdminPermissions,
   ...validateUserId,
   handleValidationErrors,
   async (req, res) => {
@@ -161,7 +135,6 @@ export const getUserById = [
 ];
 
 export const updateUser = [
-  checkAdminPermissions,
   ...validateUserId,
   ...validateUserUpdate,
   handleValidationErrors,
@@ -194,7 +167,6 @@ export const updateUser = [
 ];
 
 export const deleteUser = [
-  checkAdminPermissions,
   ...validateUserId,
   handleValidationErrors,
   async (req, res) => {
@@ -226,7 +198,6 @@ export const deleteUser = [
 ];
 
 export const getStats = [
-  checkAdminPermissions,
   async (req, res) => {
     try {
       const [userCount, chatCount, notificationCount, contactCount, blockCount] = await Promise.all([
