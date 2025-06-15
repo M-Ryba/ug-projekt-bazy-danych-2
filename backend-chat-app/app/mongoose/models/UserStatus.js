@@ -1,7 +1,7 @@
 import mongoose, { Schema } from 'mongoose';
 
 const UserStatusSchema = new Schema({
-  userId: { type: Number, required: true, unique: true }, // from Prisma
+  userId: { type: Number, required: true, unique: true }, // From Prisma
   status: { type: String, enum: ['ONLINE', 'OFFLINE', 'BUSY'], default: 'OFFLINE' },
   lastActive: { type: Date, default: Date.now }
 });

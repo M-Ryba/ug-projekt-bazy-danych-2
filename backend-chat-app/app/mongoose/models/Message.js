@@ -3,22 +3,14 @@ import mongoose, { Schema } from 'mongoose';
 const MessageSchema = new Schema(
   {
     messageId: { type: Schema.Types.ObjectId, auto: true },
-    chatId: { type: Number, required: true }, // from Prisma
-    senderUsername: { type: String, required: true }, // username zamiast senderId
+    chatId: { type: Number, required: true }, // From Prisma
+    senderId: { type: Number, required: true },
     content: { type: String },
-    type: { type: String, enum: ['text', 'image', 'video', 'gif', 'emoji', 'file'], default: 'text' },
-    media: {
-      data: Buffer, // Binary data
-      contentType: String, // MIME type (e.g. "image/jpeg", "video/mp4")
-      filename: String, // Original filename
-      size: Number // File size in bytes
-    },
     isEdited: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false },
-    readBy: [{ type: String }] // username zamiast userId
+    readBy: [{ type: Number }] // Array of userIds who have read the message
   },
   {
-    bufferCommands: false,
     timestamps: true
   }
 );
@@ -27,13 +19,13 @@ const MessageSchema = new Schema(
 MessageSchema.index({ chatId: 1, createdAt: -1 });
 
 // Unread messages count for a user in a chat
-MessageSchema.statics.countUnreadMessages = function (username, chatId) {
+MessageSchema.statics.countUnreadMessages = function (senderId, chatId) {
   return this.aggregate([
     {
       $match: {
         chatId: chatId,
-        senderUsername: { $ne: username },
-        readBy: { $nin: [username] },
+        senderId: { $ne: senderId },
+        readBy: { $nin: [senderId] },
         isDeleted: false
       }
     },
@@ -41,11 +33,6 @@ MessageSchema.statics.countUnreadMessages = function (username, chatId) {
   ]);
 };
 
-let MessageModel;
-try {
-  MessageModel = mongoose.model('Message');
-} catch {
-  MessageModel = mongoose.model('Message', MessageSchema);
-}
+const MessageModel = mongoose.model('Message', MessageSchema);
 
 export default MessageModel;
