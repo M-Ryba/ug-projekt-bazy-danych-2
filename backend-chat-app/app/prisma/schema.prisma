@@ -33,6 +33,7 @@ model User {
   // Privacy settings
   showStatus     Boolean   @default(true)
   allowInvites   Boolean   @default(true)
+  searchable     Boolean   @default(true)
 }
 
 model Contact {
