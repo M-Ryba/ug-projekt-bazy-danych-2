@@ -1,5 +1,6 @@
 import prisma from '../../prisma/client.js';
-import { body, param, validationResult } from 'express-validator';
+import { body, param } from 'express-validator';
+import handleValidationErrors from '../middleware/handleValidationErrors.js';
 
 // Validation middleware
 const validateChatId = [param('id').isInt({ min: 1 }).withMessage('Chat ID must be a positive integer')];
@@ -21,15 +22,6 @@ const validateMemberAdd = [
   body('userIds').isArray({ min: 1 }).withMessage('User IDs must be an array with at least one user'),
   body('userIds.*').isInt({ min: 1 }).withMessage('Each user ID must be a positive integer')
 ];
-
-// Helper function to handle validation errors
-const handleValidationErrors = (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-  next();
-};
 
 export const getChats = async (req, res) => {
   try {

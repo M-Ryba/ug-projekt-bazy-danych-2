@@ -8,12 +8,9 @@ import {
   deleteNotification,
   getUnreadCount
 } from '../controllers/notificationsController.js';
-import { requireAuth, requireResourceOwnership } from '../middleware/permissions.js';
+import { requireResourceOwnership } from '../middleware/permissions.js';
 
 const router = express.Router();
-
-// All routes require authentication
-router.use(requireAuth);
 
 // User can see and manage only their own notifications
 router.get('/', getNotifications); // Controller already filters by user

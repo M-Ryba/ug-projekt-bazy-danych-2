@@ -1,5 +1,5 @@
 import express from 'express';
-import { checkJwt, syncUserWithDatabase } from '../authMiddleware.js';
+import { checkJwt, syncUserWithDatabase } from '../middleware/auth.js';
 
 import userRouter from './users.js';
 import adminRouter from './admin.js';
@@ -10,7 +10,7 @@ import statusRouter from './status.js';
 import notificationsRouter from './notifications.js';
 
 const router = express.Router();
-// Middleware to check JWT and sync user with database for all API routes
+// Middleware to authenticate user by JWT and sync user with database for all API routes
 router.use(checkJwt, syncUserWithDatabase);
 
 router.get('/', (req, res) => {

@@ -1,5 +1,6 @@
 import prisma from '../../prisma/client.js';
-import { body, param, validationResult } from 'express-validator';
+import { body, param } from 'express-validator';
+import handleValidationErrors from '../middleware/handleValidationErrors.js';
 
 // Validation middleware
 const validateContactId = [param('id').isInt({ min: 1 }).withMessage('Contact ID must be a positive integer')];
@@ -8,15 +9,6 @@ const validateContactCreate = [
   body('contactId').isInt({ min: 1 }).withMessage('Contact ID must be a positive integer'),
   body('isFavorite').optional().isBoolean().withMessage('isFavorite must be a boolean')
 ];
-
-// Helper function to handle validation errors
-const handleValidationErrors = (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-  next();
-};
 
 export const getContacts = async (req, res) => {
   try {

@@ -1,5 +1,6 @@
 import prisma from '../../prisma/client.js';
-import { body, param, query, validationResult } from 'express-validator';
+import { body, param, query } from 'express-validator';
+import handleValidationErrors from '../middleware/handleValidationErrors.js';
 
 // Validation middleware
 const validateNotificationId = [param('id').isInt({ min: 1 }).withMessage('Notification ID must be a positive integer')];
@@ -21,15 +22,6 @@ const validateGetNotifications = [
   query('isRead').optional().isBoolean().withMessage('isRead must be a boolean'),
   query('type').optional().isIn(['MESSAGE', 'INVITE', 'SYSTEM']).withMessage('Invalid notification type')
 ];
-
-// Helper function to handle validation errors
-const handleValidationErrors = (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-  next();
-};
 
 export const getNotifications = [
   ...validateGetNotifications,

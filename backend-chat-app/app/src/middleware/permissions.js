@@ -1,17 +1,6 @@
 import prisma from '../../prisma/client.js';
 
-// Middleware to check if user is authenticated
-export const requireAuth = (req, res, next) => {
-  const userId = req.user?.id;
-
-  if (!userId) {
-    return res.status(401).json({ message: 'User not authenticated' });
-  }
-
-  next();
-};
-
-// Middleware to check if user is admin
+// Middleware to check if user is an admin
 export const requireAdmin = async (req, res, next) => {
   try {
     const userId = req.user?.id;
@@ -39,11 +28,7 @@ export const requireAdmin = async (req, res, next) => {
 export const requireChatMembership = async (req, res, next) => {
   try {
     const userId = req.user?.id;
-    const chatId = req.params.id || req.params.chatId;
-
-    if (!userId) {
-      return res.status(401).json({ message: 'User not authenticated' });
-    }
+    const chatId = req.params.id;
 
     if (!chatId) {
       return res.status(400).json({ message: 'Chat ID is required' });
@@ -105,21 +90,17 @@ export const requireChatAdminOrOwner = async (req, res, next) => {
   }
 };
 
-// Middleware to check if user owns a resource (for user profile, contacts, etc.)
+// Middleware to check if user owns a resource (user profile, contact, notification)
 export const requireResourceOwnership = (resourceType) => {
   return async (req, res, next) => {
     try {
-      const userId = req.user?.id;
-      const resourceId = req.params.id || req.params.userId;
-
-      if (!userId) {
-        return res.status(401).json({ message: 'User not authenticated' });
-      }
+      const userId = req.user.id;
+      const resourceId = req.params.id;
 
       // For user resources, check if the user is accessing their own data
       if (resourceType === 'user') {
         if (parseInt(resourceId) !== userId) {
-          return res.status(403).json({ message: 'Access denied: You can only access your own data' });
+          return res.status(403).json({ message: 'Access denied: You can only access your own user data' });
         }
       }
 
@@ -173,10 +154,10 @@ export const canViewUserProfile = async (req, res, next) => {
       return next();
     }
 
-    // Check if target user allows profile viewing
+    // Check if target user allows being searched
     const targetUser = await prisma.user.findUnique({
       where: { id: targetUserId },
-      select: { showStatus: true }
+      select: { searchable: true }
     });
 
     if (!targetUser) {
@@ -203,7 +184,8 @@ export const canViewUserProfile = async (req, res, next) => {
       }
     });
 
-    if (!areConnected && !sharedChat && !targetUser.showStatus) {
+    // If not in contacts or not in same chat and target user is not searchable, deny access
+    if (!areConnected && !sharedChat && !targetUser.searchable) {
       return res.status(403).json({ message: "Access denied: You cannot view this user's profile" });
     }
 
