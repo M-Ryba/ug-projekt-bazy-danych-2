@@ -1,19 +1,9 @@
 import prisma from '../../prisma/client.js';
-import { body, param, validationResult } from 'express-validator';
+import { body, param } from 'express-validator';
+import { handleValidationErrors } from '../middleware/validation.js';
 
-// Validation middleware
 const validateBlockId = [param('id').isInt({ min: 1 }).withMessage('Block ID must be a positive integer')];
-
 const validateBlockCreate = [body('blockedId').isInt({ min: 1 }).withMessage('Blocked user ID must be a positive integer')];
-
-// Helper function to handle validation errors
-const handleValidationErrors = (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-  next();
-};
 
 export const getBlocks = async (req, res) => {
   try {
