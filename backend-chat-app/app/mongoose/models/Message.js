@@ -3,8 +3,8 @@ import mongoose, { Schema } from 'mongoose';
 const MessageSchema = new Schema(
   {
     messageId: { type: Schema.Types.ObjectId, auto: true },
-    chatId: { type: Number, required: true }, // From Prisma
-    senderId: { type: Number, required: true },
+    chatId: { type: Number, required: true }, // Chat: id [Prisma]
+    senderId: { type: Number, required: true }, // User: id [Prisma]
     content: { type: String },
     isEdited: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false },

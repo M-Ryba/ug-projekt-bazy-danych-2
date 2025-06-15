@@ -1,7 +1,7 @@
 import mongoose, { Schema } from 'mongoose';
 
 const ChatHistorySchema = new Schema({
-  chatId: { type: Number, required: true }, // From Prisma
+  chatId: { type: Number, required: true }, // Chat: id [Prisma]
   messages: [{ type: Schema.Types.ObjectId, ref: 'Message' }]
 });
 
