@@ -15,12 +15,10 @@ export const getStatus = [
 
       let userStatus = await UserStatus.findOne({ userId: parseInt(userId) });
 
+      // Create a default status if it doesn't exist
       if (!userStatus) {
-        // Create default status if doesn't exist
         userStatus = await UserStatus.create({
-          userId: parseInt(userId),
-          status: 'OFFLINE',
-          lastActive: new Date()
+          userId: parseInt(userId)
         });
       }
 
@@ -39,16 +37,12 @@ export const updateStatus = [
       const { status } = req.body;
       const userId = req.user?.id;
 
-      if (!userId) {
-        return res.status(401).json({ message: 'User not authenticated' });
-      }
-
       const userStatus = await UserStatus.findOneAndUpdate(
         { userId },
         {
           status,
           lastActive: new Date(),
-          ...(status === 'ONLINE' && { lastActive: new Date() })
+          ...(status === 'ONLINE' && { lastActive: new Date() }) // If status is ONLINE, update lastActive
         },
         {
           new: true,

@@ -104,6 +104,13 @@ export const requireResourceOwnership = (resourceType) => {
         }
       }
 
+      // For status resources, check if the user is only modifying their own status
+      if (resourceType === 'status') {
+        if (parseInt(resourceId) !== userId) {
+          return res.status(403).json({ message: 'Access denied: You can only modify your own status' });
+        }
+      }
+
       // For contact resources, check if the user owns the contact
       if (resourceType === 'contact') {
         const contact = await prisma.contact.findFirst({
@@ -192,5 +199,32 @@ export const canViewUserProfile = async (req, res, next) => {
     next();
   } catch (error) {
     res.status(500).json({ message: 'Error checking profile access', error: error.message });
+  }
+};
+
+// Middleware to check if user can view another user's status (showStatus)
+export const canViewUserStatus = async (req, res, next) => {
+  try {
+    const currentUserId = req.user?.id;
+    const targetUserId = parseInt(req.params.userId);
+
+    // User can always view their own status
+    if (currentUserId === targetUserId) {
+      return next();
+    }
+    // Check if target user allows their status to be viewed
+    const user = await prisma.user.findUnique({
+      where: { id: targetUserId },
+      select: { showStatus: true }
+    });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    if (!user.showStatus) {
+      return res.status(403).json({ message: 'This user does not allow their status to be viewed' });
+    }
+    next();
+  } catch (error) {
+    res.status(500).json({ message: 'Error checking status permissions', error: error.message });
   }
 };
