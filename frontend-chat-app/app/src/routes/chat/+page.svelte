@@ -4,7 +4,7 @@
 	import { onMount } from 'svelte';
 	import { io } from 'socket.io-client';
 
-	const username = session.user.name;
+	const senderId = session.user.id;
 
 	let socket;
 	let message = $state('');
@@ -39,7 +39,7 @@
 		if (message.trim()) {
 			const data = {
 				chatId,
-				username,
+				senderId,
 				content: message,
 				type: 'text'
 			};
@@ -54,23 +54,24 @@
 	}
 
 	function saveEdit(msg) {
-		socket.emit('edit_message', { messageId: msg._id, username, content: editContent });
+		socket.emit('edit_message', { messageId: msg._id, senderId, content: editContent });
 		editingId = null;
 		editContent = '';
 	}
 
 	function deleteMessage(msg) {
-		socket.emit('delete_message', { messageId: msg._id, username });
+		socket.emit('delete_message', { messageId: msg._id, senderId });
 	}
 </script>
 
 <div class="bg-base-200 mx-auto mt-8 w-full max-w-xl rounded p-4 shadow">
 	<h2 class="mb-4 text-2xl font-bold">Pokój czatu: {chatId}</h2>
+	<p class="mb-2 text-sm text-gray-500">Twoje ID użytkownika: {senderId}</p>
 	<div class="mb-4 flex h-80 flex-col gap-2 overflow-y-auto">
 		{#each messages as msg (msg._id)}
-			<div class="chat chat-{msg.senderUsername === username ? 'end' : 'start'}">
+			<div class="chat chat-{msg.senderId === senderId ? 'end' : 'start'}">
 				<div class="chat-header flex items-center gap-2">
-					<span class="font-semibold">{msg.senderUsername === username ? 'Ty' : msg.senderUsername}</span>
+					<span class="font-semibold">{msg.senderId === senderId ? 'Ty' : msg.senderId}</span>
 					{#if msg.isEdited}
 						<span class="badge badge-xs badge-info">edytowano</span>
 					{/if}
@@ -84,7 +85,7 @@
 				{:else}
 					<div class="chat-bubble">{msg.content}</div>
 				{/if}
-				{#if msg.senderUsername === username && !msg.isDeleted}
+				{#if msg.senderId === senderId && !msg.isDeleted}
 					<div class="mt-1 flex gap-1">
 						<button class="btn btn-xs btn-outline btn-info" onclick={() => startEdit(msg)}>Edytuj</button>
 						<button class="btn btn-xs btn-outline btn-error" onclick={() => deleteMessage(msg)}>Usuń</button>
