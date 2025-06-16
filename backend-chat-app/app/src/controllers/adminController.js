@@ -4,12 +4,12 @@ import UserStatus from '../../mongoose/models/UserStatus.js';
 import { handleValidationErrors, validateUserId } from '../middleware/validation.js';
 
 export const getAllUsers = [
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       const users = await prisma.user.findMany();
       res.json(users);
     } catch (error) {
-      res.status(500).json({ message: 'Error while fetching users', error: error.message });
+      next(error);
     }
   }
 ];
@@ -17,7 +17,7 @@ export const getAllUsers = [
 export const getUserStats = [
   ...validateUserId,
   handleValidationErrors,
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       const { userId } = req.params;
 
@@ -38,7 +38,9 @@ export const getUserStats = [
       });
 
       if (!user) {
-        return res.status(404).json({ message: 'User not found' });
+        const err = new Error('User not found');
+        err.status = 404;
+        return next(err);
       }
 
       // Get message count from MongoDB
@@ -53,7 +55,7 @@ export const getUserStats = [
         status: userStatus || { status: 'OFFLINE', lastActive: null }
       });
     } catch (error) {
-      res.status(500).json({ message: 'Error while fetching user stats', error: error.message });
+      next(error);
     }
   }
 ];
@@ -61,7 +63,7 @@ export const getUserStats = [
 export const deleteUser = [
   ...validateUserId,
   handleValidationErrors,
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       const { userId } = req.params;
 
@@ -70,7 +72,9 @@ export const deleteUser = [
       });
 
       if (!user) {
-        return res.status(404).json({ message: 'User not found' });
+        const err = new Error('User not found');
+        err.status = 404;
+        return next(err);
       }
 
       // Delete user's messages from MongoDB
@@ -84,7 +88,7 @@ export const deleteUser = [
 
       res.json({ message: 'User deleted successfully' });
     } catch (error) {
-      res.status(500).json({ message: 'Error while deleting user', error: error.message });
+      next(error);
     }
   }
 ];

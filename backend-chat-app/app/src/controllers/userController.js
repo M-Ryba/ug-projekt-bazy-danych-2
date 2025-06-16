@@ -13,7 +13,7 @@ const validateUserUpdate = [
 export const getUserByUsername = [
   ...validateUsername,
   handleValidationErrors,
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       const { username } = req.params;
 
@@ -32,12 +32,14 @@ export const getUserByUsername = [
       });
 
       if (!user) {
-        return res.status(404).json({ message: 'User not found!' });
+        const err = new Error('User not found!');
+        err.status = 404;
+        return next(err);
       }
 
       res.json(user);
     } catch (error) {
-      res.status(500).json({ message: 'Error: ', error: error.message });
+      next(error);
     }
   }
 ];
@@ -45,7 +47,7 @@ export const getUserByUsername = [
 export const updateUser = [
   ...validateUserUpdate,
   handleValidationErrors,
-  async (req, res) => {
+  async (req, res, next) => {
     const { username } = req.params;
     const { displayName, avatarUrl, showStatus, allowInvites, searchable } = req.body;
     const updateData = {};
@@ -54,7 +56,6 @@ export const updateUser = [
     if (showStatus !== undefined) updateData.showStatus = showStatus;
     if (allowInvites !== undefined) updateData.allowInvites = allowInvites;
     if (searchable !== undefined) updateData.searchable = searchable;
-
     try {
       const updatedUser = await prisma.user.update({
         where: { username },
@@ -63,7 +64,8 @@ export const updateUser = [
 
       res.json(updatedUser);
     } catch (error) {
-      res.status(400).json({ message: 'Error while updating user', error: error.message });
+      error.status = 400;
+      next(error);
     }
   }
 ];

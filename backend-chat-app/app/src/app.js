@@ -9,6 +9,7 @@ await connectMongoose();
 
 import apiRouter from './routes/api.js';
 import setupSocket from './socket.js';
+import errorHandler from './middleware/errorHandler.js';
 
 const app = express();
 const server = http.createServer(app);
@@ -31,6 +32,9 @@ app.get('/', (req, res) => {
 
 // Use routes
 app.use('/api', apiRouter);
+
+// Centralna obsługa błędów (musi być na końcu)
+app.use(errorHandler);
 
 server.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);

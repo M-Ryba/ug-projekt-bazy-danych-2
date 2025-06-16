@@ -9,7 +9,7 @@ const validateStatusUpdate = [body('status').isIn(['ONLINE', 'OFFLINE', 'BUSY'])
 export const getStatus = [
   ...validateUserId,
   handleValidationErrors,
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       const { userId } = req.params;
 
@@ -24,7 +24,7 @@ export const getStatus = [
 
       res.json(userStatus);
     } catch (error) {
-      res.status(500).json({ message: 'Error while fetching status', error: error.message });
+      next(error);
     }
   }
 ];
@@ -32,7 +32,7 @@ export const getStatus = [
 export const updateStatus = [
   ...validateStatusUpdate,
   handleValidationErrors,
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       const { status } = req.body;
       const userId = req.user?.id;
@@ -56,7 +56,7 @@ export const updateStatus = [
         status: userStatus
       });
     } catch (error) {
-      res.status(500).json({ message: 'Error while updating status', error: error.message });
+      next(error);
     }
   }
 ];

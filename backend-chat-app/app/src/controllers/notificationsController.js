@@ -25,7 +25,7 @@ const validateGetNotifications = [
 export const getNotifications = [
   ...validateGetNotifications,
   handleValidationErrors,
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       const userId = req.user?.id;
 
@@ -58,12 +58,12 @@ export const getNotifications = [
         }
       });
     } catch (error) {
-      res.status(500).json({ message: 'Error while fetching notifications', error: error.message });
+      next(error);
     }
   }
 ];
 
-export const getUnreadCount = async (req, res) => {
+export const getUnreadCount = async (req, res, next) => {
   try {
     const userId = req.user?.id;
 
@@ -76,14 +76,14 @@ export const getUnreadCount = async (req, res) => {
 
     res.json({ unreadCount: count });
   } catch (error) {
-    res.status(500).json({ message: 'Error while fetching unread count', error: error.message });
+    next(error);
   }
 };
 
 export const createNotification = [
   ...validateNotificationCreate,
   handleValidationErrors,
-  async (req, res) => {
+  async (req, res, next) => {
     const { userId, type, content } = req.body;
 
     try {
@@ -93,7 +93,9 @@ export const createNotification = [
       });
 
       if (!user) {
-        return res.status(404).json({ message: 'Target user not found' });
+        const err = new Error('Target user not found');
+        err.status = 404;
+        return next(err);
       }
 
       const notification = await prisma.notification.create({
@@ -106,7 +108,7 @@ export const createNotification = [
 
       res.status(201).json(notification);
     } catch (error) {
-      res.status(500).json({ message: 'Error while creating notification', error: error.message });
+      next(error);
     }
   }
 ];
@@ -114,7 +116,7 @@ export const createNotification = [
 export const markAsRead = [
   ...validateMarkAsRead,
   handleValidationErrors,
-  async (req, res) => {
+  async (req, res, next) => {
     const { notificationIds } = req.body;
     const userId = req.user?.id;
 
@@ -135,12 +137,12 @@ export const markAsRead = [
         updatedCount: result.count
       });
     } catch (error) {
-      res.status(500).json({ message: 'Error while marking notifications as read', error: error.message });
+      next(error);
     }
   }
 ];
 
-export const markAllAsRead = async (req, res) => {
+export const markAllAsRead = async (req, res, next) => {
   try {
     const userId = req.user?.id;
 
@@ -159,14 +161,14 @@ export const markAllAsRead = async (req, res) => {
       updatedCount: result.count
     });
   } catch (error) {
-    res.status(500).json({ message: 'Error while marking all notifications as read', error: error.message });
+    next(error);
   }
 };
 
 export const deleteNotification = [
   ...validateNotificationId,
   handleValidationErrors,
-  async (req, res) => {
+  async (req, res, next) => {
     const { id } = req.params;
 
     try {
@@ -176,7 +178,7 @@ export const deleteNotification = [
 
       res.status(200).json({ message: 'Notification deleted successfully' });
     } catch (error) {
-      res.status(500).json({ message: 'Error while deleting notification', error: error.message });
+      next(error);
     }
   }
 ];

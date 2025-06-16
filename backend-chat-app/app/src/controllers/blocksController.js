@@ -5,7 +5,7 @@ import { handleValidationErrors } from '../middleware/validation.js';
 const validateBlockId = [param('id').isInt({ min: 1 }).withMessage('Block ID must be a positive integer')];
 const validateBlockCreate = [body('blockedId').isInt({ min: 1 }).withMessage('Blocked user ID must be a positive integer')];
 
-export const getBlocks = async (req, res) => {
+export const getBlocks = async (req, res, next) => {
   try {
     const userId = req.user?.id;
 
@@ -25,19 +25,21 @@ export const getBlocks = async (req, res) => {
 
     res.json(blocks);
   } catch (error) {
-    res.status(500).json({ message: 'Error while fetching blocked users', error: error.message });
+    next(error);
   }
 };
 
 export const blockUser = [
   ...validateBlockCreate,
   handleValidationErrors,
-  async (req, res) => {
+  async (req, res, next) => {
     const { blockedId } = req.body;
     const userId = req.user?.id;
 
     if (userId === blockedId) {
-      return res.status(400).json({ message: 'Cannot block yourself' });
+      const err = new Error('Cannot block yourself');
+      err.status = 400;
+      return next(err);
     }
 
     try {
@@ -47,7 +49,9 @@ export const blockUser = [
       });
 
       if (!blockedUser) {
-        return res.status(404).json({ message: 'User to block not found' });
+        const err = new Error('User to block not found');
+        err.status = 404;
+        return next(err);
       }
 
       // Check if block already exists
@@ -61,7 +65,9 @@ export const blockUser = [
       });
 
       if (existingBlock) {
-        return res.status(409).json({ message: 'User is already blocked' });
+        const err = new Error('User is already blocked');
+        err.status = 409;
+        return next(err);
       }
 
       const block = await prisma.block.create({
@@ -93,7 +99,7 @@ export const blockUser = [
 
       res.status(201).json(block);
     } catch (error) {
-      res.status(500).json({ message: 'Error while blocking user', error: error.message });
+      next(error);
     }
   }
 ];
@@ -101,7 +107,7 @@ export const blockUser = [
 export const unblockUser = [
   ...validateBlockId,
   handleValidationErrors,
-  async (req, res) => {
+  async (req, res, next) => {
     const { id } = req.params;
     const userId = req.user?.id;
 
@@ -114,7 +120,9 @@ export const unblockUser = [
       });
 
       if (!block) {
-        return res.status(404).json({ message: 'Block not found' });
+        const err = new Error('Block not found');
+        err.status = 404;
+        return next(err);
       }
 
       await prisma.block.delete({
@@ -123,7 +131,7 @@ export const unblockUser = [
 
       res.status(200).json({ message: 'User unblocked successfully' });
     } catch (error) {
-      res.status(500).json({ message: 'Error while unblocking user', error: error.message });
+      next(error);
     }
   }
 ];

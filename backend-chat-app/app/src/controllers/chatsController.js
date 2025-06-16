@@ -22,7 +22,7 @@ const validateMemberAdd = [
   body('userIds.*').isInt({ min: 1 }).withMessage('Each user ID must be a positive integer')
 ];
 
-export const getChats = async (req, res) => {
+export const getChats = async (req, res, next) => {
   try {
     const userId = req.user?.id;
 
@@ -58,14 +58,14 @@ export const getChats = async (req, res) => {
 
     res.json(chats);
   } catch (error) {
-    res.status(500).json({ message: 'Error while fetching chats', error: error.message });
+    next(error);
   }
 };
 
 export const getChatById = [
   ...validateChatId,
   handleValidationErrors,
-  async (req, res) => {
+  async (req, res, next) => {
     const { id } = req.params;
     const userId = req.user?.id;
 
@@ -101,12 +101,14 @@ export const getChatById = [
       });
 
       if (!chat) {
-        return res.status(404).json({ message: 'Chat not found or access denied' });
+        const err = new Error('Chat not found or insufficient permissions');
+        err.status = 404;
+        return next(err);
       }
 
       res.json(chat);
     } catch (error) {
-      res.status(500).json({ message: 'Error while fetching chat', error: error.message });
+      next(error);
     }
   }
 ];
@@ -114,7 +116,7 @@ export const getChatById = [
 export const createChat = [
   ...validateChatCreate,
   handleValidationErrors,
-  async (req, res) => {
+  async (req, res, next) => {
     const { type, name, description, memberIds } = req.body;
     const userId = req.user?.id;
 
@@ -185,7 +187,7 @@ export const createChat = [
 
       res.status(201).json(chat);
     } catch (error) {
-      res.status(500).json({ message: 'Error while creating chat', error: error.message });
+      next(error);
     }
   }
 ];
@@ -194,7 +196,7 @@ export const updateChat = [
   ...validateChatId,
   ...validateChatUpdate,
   handleValidationErrors,
-  async (req, res) => {
+  async (req, res, next) => {
     const { id } = req.params;
     const { name, description } = req.body;
     const userId = req.user?.id;
@@ -252,7 +254,7 @@ export const updateChat = [
 
       res.json(updatedChat);
     } catch (error) {
-      res.status(500).json({ message: 'Error while updating chat', error: error.message });
+      next(error);
     }
   }
 ];
@@ -260,7 +262,7 @@ export const updateChat = [
 export const deleteChat = [
   ...validateChatId,
   handleValidationErrors,
-  async (req, res) => {
+  async (req, res, next) => {
     const { id } = req.params;
     const userId = req.user?.id;
 
@@ -282,7 +284,7 @@ export const deleteChat = [
 
       res.status(200).json({ message: 'Chat deleted successfully' });
     } catch (error) {
-      res.status(500).json({ message: 'Error while deleting chat', error: error.message });
+      next(error);
     }
   }
 ];
@@ -291,7 +293,7 @@ export const addMembers = [
   ...validateChatId,
   ...validateMemberAdd,
   handleValidationErrors,
-  async (req, res) => {
+  async (req, res, next) => {
     const { id } = req.params;
     const { userIds } = req.body;
     const userId = req.user?.id;
@@ -357,7 +359,7 @@ export const addMembers = [
 
       res.json(updatedChat);
     } catch (error) {
-      res.status(500).json({ message: 'Error while adding members', error: error.message });
+      next(error);
     }
   }
 ];
@@ -366,7 +368,7 @@ export const removeMember = [
   ...validateChatId,
   param('memberId').isInt({ min: 1 }).withMessage('Member ID must be a positive integer'),
   handleValidationErrors,
-  async (req, res) => {
+  async (req, res, next) => {
     const { id, memberId } = req.params;
     const userId = req.user?.id;
 
@@ -409,7 +411,7 @@ export const removeMember = [
 
       res.status(200).json({ message: 'Member removed successfully' });
     } catch (error) {
-      res.status(500).json({ message: 'Error while removing member', error: error.message });
+      next(error);
     }
   }
 ];
@@ -417,7 +419,7 @@ export const removeMember = [
 export const leaveChat = [
   ...validateChatId,
   handleValidationErrors,
-  async (req, res) => {
+  async (req, res, next) => {
     const { id } = req.params;
     const userId = req.user?.id;
 
@@ -439,7 +441,7 @@ export const leaveChat = [
 
       res.status(200).json({ message: 'Left chat successfully' });
     } catch (error) {
-      res.status(500).json({ message: 'Error while leaving chat', error: error.message });
+      next(error);
     }
   }
 ];

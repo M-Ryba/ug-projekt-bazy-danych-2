@@ -4,10 +4,9 @@ import handleValidationErrors from '../middleware/handleValidationErrors.js';
 
 const validateContactId = [param('id').isInt({ min: 1 }).withMessage('Contact ID must be a positive integer')];
 
-export const getContacts = async (req, res) => {
+export const getContacts = async (req, res, next) => {
   try {
     const userId = req.user?.id;
-
     const contacts = await prisma.contact.findMany({
       where: { ownerId: userId },
       include: {
@@ -22,10 +21,9 @@ export const getContacts = async (req, res) => {
         }
       }
     });
-
     res.json(contacts);
   } catch (error) {
-    res.status(500).json({ message: 'Error while fetching contacts', error: error.message });
+    next(error);
   }
 };
 
@@ -33,16 +31,15 @@ export const addContact = [
   body('contactId').isInt({ min: 1 }).withMessage('Contact ID must be a positive integer'),
   body('isFavorite').optional().isBoolean().withMessage('isFavorite must be a boolean'),
   handleValidationErrors,
-  async (req, res) => {
+  async (req, res, next) => {
     const { contactId, isFavorite = false } = req.body;
     const userId = req.user?.id;
-
     if (userId === contactId) {
-      return res.status(400).json({ message: 'Cannot add yourself as a contact' });
+      const err = new Error('Cannot add yourself as a contact');
+      err.status = 400;
+      return next(err);
     }
-
     try {
-      // Check if contact already exists
       const existingContact = await prisma.contact.findUnique({
         where: {
           ownerId_contactId: {
@@ -51,11 +48,11 @@ export const addContact = [
           }
         }
       });
-
       if (existingContact) {
-        return res.status(409).json({ message: 'Contact already exists' });
+        const err = new Error('Contact already exists');
+        err.status = 409;
+        return next(err);
       }
-
       const contact = await prisma.contact.create({
         data: {
           ownerId: userId,
@@ -74,10 +71,9 @@ export const addContact = [
           }
         }
       });
-
       res.status(201).json(contact);
     } catch (error) {
-      res.status(500).json({ message: 'Error while adding contact', error: error.message });
+      next(error);
     }
   }
 ];
@@ -86,11 +82,10 @@ export const updateContact = [
   ...validateContactId,
   body('isFavorite').optional().isBoolean().withMessage('isFavorite must be a boolean'),
   handleValidationErrors,
-  async (req, res) => {
+  async (req, res, next) => {
     const { id } = req.params;
     const { isFavorite } = req.body;
     const userId = req.user?.id;
-
     try {
       const contact = await prisma.contact.findFirst({
         where: {
@@ -98,11 +93,11 @@ export const updateContact = [
           ownerId: userId
         }
       });
-
       if (!contact) {
-        return res.status(404).json({ message: 'Contact not found' });
+        const err = new Error('Contact not found');
+        err.status = 404;
+        return next(err);
       }
-
       const updatedContact = await prisma.contact.update({
         where: { id: parseInt(id) },
         data: { isFavorite },
@@ -118,10 +113,9 @@ export const updateContact = [
           }
         }
       });
-
       res.json(updatedContact);
     } catch (error) {
-      res.status(500).json({ message: 'Error while updating contact', error: error.message });
+      next(error);
     }
   }
 ];
@@ -129,10 +123,9 @@ export const updateContact = [
 export const deleteContact = [
   ...validateContactId,
   handleValidationErrors,
-  async (req, res) => {
+  async (req, res, next) => {
     const { id } = req.params;
     const userId = req.user?.id;
-
     try {
       const contact = await prisma.contact.findFirst({
         where: {
@@ -140,18 +133,17 @@ export const deleteContact = [
           ownerId: userId
         }
       });
-
       if (!contact) {
-        return res.status(404).json({ message: 'Contact not found' });
+        const err = new Error('Contact not found');
+        err.status = 404;
+        return next(err);
       }
-
       await prisma.contact.delete({
         where: { id: parseInt(id) }
       });
-
       res.status(200).json({ message: 'Contact deleted successfully' });
     } catch (error) {
-      res.status(500).json({ message: 'Error while deleting contact', error: error.message });
+      next(error);
     }
   }
 ];
