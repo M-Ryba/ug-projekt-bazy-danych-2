@@ -140,7 +140,7 @@ export const requireResourceOwnership = (resourceType) => {
 export const canViewUserProfile = async (req, res, next) => {
   try {
     const currentUserId = req.user?.id;
-    const targetUserId = parseInt(req.params.id || req.params.userId);
+    const targetUserId = parseInt(req.params.id);
 
     // Users can always view their own profile
     if (currentUserId === targetUserId) {
