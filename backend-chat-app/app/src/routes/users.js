@@ -1,8 +1,10 @@
 import express from 'express';
-import { getUserByUsername, updateUser } from '../controllers/userController.js';
+import { getUserByUsername, updateUser, getSelf } from '../controllers/userController.js';
 import { requireResourceOwnership, canViewUserProfile } from '../middleware/permissions.js';
 
 const router = express.Router();
+
+router.get('/me', getSelf);
 
 router.get('/:id', canViewUserProfile, getUserByUsername);
 

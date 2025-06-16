@@ -1,10 +1,12 @@
 <script>
 	let { data } = $props();
-	const { wsUrl, session } = data;
+	const { wsUrl } = data;
 	import { onMount } from 'svelte';
 	import { io } from 'socket.io-client';
+	import { page } from '$app/stores';
 
-	const senderId = session.user.id;
+	const user = $page.data.user;
+	const senderId = user.id;
 
 	let socket;
 	let message = $state('');
@@ -66,7 +68,7 @@
 
 <div class="bg-base-200 mx-auto mt-8 w-full max-w-xl rounded p-4 shadow">
 	<h2 class="mb-4 text-2xl font-bold">Pokój czatu: {chatId}</h2>
-	<p class="mb-2 text-sm text-gray-500">Twoje ID użytkownika: {senderId}</p>
+	<p class="mb-2 text-sm text-gray-500"></p>
 	<div class="mb-4 flex h-80 flex-col gap-2 overflow-y-auto">
 		{#each messages as msg (msg._id)}
 			<div class="chat chat-{msg.senderId === senderId ? 'end' : 'start'}">

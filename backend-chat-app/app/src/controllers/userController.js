@@ -10,6 +10,20 @@ const validateUserUpdate = [
   body('searchable').optional().isBoolean().withMessage('Searchable must be a boolean')
 ];
 
+export const getSelf = [
+  async (req, res, next) => {
+    try {
+      res.json({
+        id: req.user.id,
+        displayName: req.user.displayName,
+        avatarUrl: req.user.avatarUrl
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+];
+
 export const getUserByUsername = [
   ...validateUsername,
   handleValidationErrors,
