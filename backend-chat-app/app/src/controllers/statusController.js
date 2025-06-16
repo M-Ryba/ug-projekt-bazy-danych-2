@@ -1,8 +1,7 @@
 import UserStatus from '../../mongoose/models/UserStatus.js';
 import { body, param } from 'express-validator';
-import handleValidationErrors from '../middleware/handleValidationErrors.js';
+import handleValidationErrors from '../middleware/validation.js';
 
-// Validation middleware
 const validateUserId = [param('userId').isInt({ min: 1 }).withMessage('User ID must be a positive integer')];
 const validateStatusUpdate = [body('status').isIn(['ONLINE', 'OFFLINE', 'BUSY']).withMessage('Status must be ONLINE, OFFLINE, or BUSY')];
 

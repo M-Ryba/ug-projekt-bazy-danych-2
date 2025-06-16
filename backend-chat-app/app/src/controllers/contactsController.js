@@ -1,6 +1,6 @@
 import prisma from '../../prisma/client.js';
 import { body, param } from 'express-validator';
-import handleValidationErrors from '../middleware/handleValidationErrors.js';
+import handleValidationErrors from '../middleware/validation.js';
 
 const validateContactId = [param('id').isInt({ min: 1 }).withMessage('Contact ID must be a positive integer')];
 
