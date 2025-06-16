@@ -32,14 +32,14 @@ export default function setupSocket(server) {
 
     // Sending a new message (text, media, emoji, gif)
     socket.on('send_message', async (data) => {
-      // data: { chatId, username, content, type, media }
+      // data: { chatId, senderId, content, type, media }
       let chatId = data.chatId;
       if (isNaN(Number(chatId))) {
         chatId = null;
       }
       const msg = new MessageModel({
         chatId: chatId !== null ? Number(chatId) : undefined,
-        senderUsername: data.username,
+        senderId: data.senderId,
         content: data.content,
         type: data.type || 'text',
         media: data.media || undefined
@@ -49,19 +49,15 @@ export default function setupSocket(server) {
     });
 
     // Editing a message
-    socket.on('edit_message', async ({ messageId, username, content }) => {
-      const msg = await MessageModel.findOneAndUpdate(
-        { _id: messageId, senderUsername: username, isDeleted: false },
-        { content, isEdited: true },
-        { new: true }
-      );
+    socket.on('edit_message', async ({ messageId, senderId, content }) => {
+      const msg = await MessageModel.findOneAndUpdate({ _id: messageId, senderId: senderId, isDeleted: false }, { content, isEdited: true }, { new: true });
       if (msg) io.to(msg.chatId).emit('message_edited', msg.toObject());
     });
 
     // Deleting a message
-    socket.on('delete_message', async ({ messageId, username }) => {
+    socket.on('delete_message', async ({ messageId, senderId }) => {
       const msg = await MessageModel.findOneAndUpdate(
-        { _id: messageId, senderUsername: username, isDeleted: false },
+        { _id: messageId, senderId: senderId, isDeleted: false },
         { isDeleted: true, content: '' },
         { new: true }
       );
