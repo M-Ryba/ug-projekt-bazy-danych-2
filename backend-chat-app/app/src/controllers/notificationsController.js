@@ -2,7 +2,6 @@ import prisma from '../../prisma/client.js';
 import { body, param, query } from 'express-validator';
 import handleValidationErrors from '../middleware/handleValidationErrors.js';
 
-// Validation middleware
 const validateNotificationId = [param('id').isInt({ min: 1 }).withMessage('Notification ID must be a positive integer')];
 
 const validateNotificationCreate = [
@@ -64,31 +63,22 @@ export const getNotifications = [
   }
 ];
 
-export const getNotificationById = [
-  ...validateNotificationId,
-  handleValidationErrors,
-  async (req, res) => {
-    const { id } = req.params;
+export const getUnreadCount = async (req, res) => {
+  try {
     const userId = req.user?.id;
 
-    try {
-      const notification = await prisma.notification.findFirst({
-        where: {
-          id: parseInt(id),
-          userId
-        }
-      });
-
-      if (!notification) {
-        return res.status(404).json({ message: 'Notification not found' });
+    const count = await prisma.notification.count({
+      where: {
+        userId,
+        isRead: false
       }
+    });
 
-      res.json(notification);
-    } catch (error) {
-      res.status(500).json({ message: 'Error while fetching notification', error: error.message });
-    }
+    res.json({ unreadCount: count });
+  } catch (error) {
+    res.status(500).json({ message: 'Error while fetching unread count', error: error.message });
   }
-];
+};
 
 export const createNotification = [
   ...validateNotificationCreate,
@@ -178,20 +168,8 @@ export const deleteNotification = [
   handleValidationErrors,
   async (req, res) => {
     const { id } = req.params;
-    const userId = req.user?.id;
 
     try {
-      const notification = await prisma.notification.findFirst({
-        where: {
-          id: parseInt(id),
-          userId
-        }
-      });
-
-      if (!notification) {
-        return res.status(404).json({ message: 'Notification not found' });
-      }
-
       await prisma.notification.delete({
         where: { id: parseInt(id) }
       });
@@ -202,20 +180,3 @@ export const deleteNotification = [
     }
   }
 ];
-
-export const getUnreadCount = async (req, res) => {
-  try {
-    const userId = req.user?.id;
-
-    const count = await prisma.notification.count({
-      where: {
-        userId,
-        isRead: false
-      }
-    });
-
-    res.json({ unreadCount: count });
-  } catch (error) {
-    res.status(500).json({ message: 'Error while fetching unread count', error: error.message });
-  }
-};
