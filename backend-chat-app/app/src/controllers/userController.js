@@ -1,6 +1,6 @@
 import prisma from '../../prisma/client.js';
 import { body } from 'express-validator';
-import { handleValidationErrors, validateUsername } from '../middleware/validation.js';
+import { handleValidationErrors, validateUserId, validateUsername } from '../middleware/validation.js';
 
 const validateUserUpdate = [
   body('displayName').optional().isLength({ min: 1, max: 100 }).withMessage('Display name must be between 1 and 100 characters'),
@@ -24,6 +24,41 @@ export const getSelf = [
   }
 ];
 
+export const getUserById = [
+  ...validateUserId,
+  handleValidationErrors,
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+
+      const user = await prisma.user.findUnique({
+        where: { id: id },
+        select: {
+          id: true,
+          username: true,
+          displayName: true,
+          avatarUrl: true,
+          emailVerified: true,
+          showStatus: true,
+          allowInvites: true,
+          createdAt: true,
+          updatedAt: true
+        }
+      });
+
+      if (!user) {
+        const err = new Error('User not found!');
+        err.status = 404;
+        return next(err);
+      }
+
+      res.json(user);
+    } catch (error) {
+      next(error);
+    }
+  }
+];
+
 export const getUserByUsername = [
   ...validateUsername,
   handleValidationErrors,
@@ -34,6 +69,7 @@ export const getUserByUsername = [
       const user = await prisma.user.findUnique({
         where: { username: username },
         select: {
+          id: true,
           username: true,
           displayName: true,
           avatarUrl: true,
