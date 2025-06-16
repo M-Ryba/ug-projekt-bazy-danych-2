@@ -5,10 +5,6 @@ export const requireAdmin = async (req, res, next) => {
   try {
     const userId = req.user?.id;
 
-    if (!userId) {
-      return res.status(401).json({ message: 'User not authenticated' });
-    }
-
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: { isAdmin: true }
@@ -45,8 +41,6 @@ export const requireChatMembership = async (req, res, next) => {
       return res.status(403).json({ message: 'Access denied: You are not a member of this chat' });
     }
 
-    // Add membership info to request for later use
-    req.chatMembership = membership;
     next();
   } catch (error) {
     res.status(500).json({ message: 'Error checking chat membership', error: error.message });
@@ -57,11 +51,7 @@ export const requireChatMembership = async (req, res, next) => {
 export const requireChatAdminOrOwner = async (req, res, next) => {
   try {
     const userId = req.user?.id;
-    const chatId = req.params.id || req.params.chatId;
-
-    if (!userId) {
-      return res.status(401).json({ message: 'User not authenticated' });
-    }
+    const chatId = req.params.id;
 
     const chat = await prisma.chat.findFirst({
       where: {
@@ -152,10 +142,6 @@ export const canViewUserProfile = async (req, res, next) => {
     const currentUserId = req.user?.id;
     const targetUserId = parseInt(req.params.id || req.params.userId);
 
-    if (!currentUserId) {
-      return res.status(401).json({ message: 'User not authenticated' });
-    }
-
     // Users can always view their own profile
     if (currentUserId === targetUserId) {
       return next();
@@ -226,5 +212,27 @@ export const canViewUserStatus = async (req, res, next) => {
     next();
   } catch (error) {
     res.status(500).json({ message: 'Error checking status permissions', error: error.message });
+  }
+};
+
+export const canReceiveInvites = async (req, res, next) => {
+  try {
+    const { contactId } = req.body;
+    if (!contactId) {
+      return res.status(400).json({ message: 'Contact ID is required' });
+    }
+    const user = await prisma.user.findUnique({
+      where: { id: contactId },
+      select: { allowInvites: true }
+    });
+    if (!user) {
+      return res.status(404).json({ message: 'Contact user not found' });
+    }
+    if (!user.allowInvites) {
+      return res.status(403).json({ message: 'This user does not allow invites' });
+    }
+    next();
+  } catch (error) {
+    res.status(500).json({ message: 'Error checking invite permissions', error: error.message });
   }
 };

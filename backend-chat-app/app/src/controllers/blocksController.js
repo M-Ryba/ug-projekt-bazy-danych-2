@@ -9,10 +9,6 @@ export const getBlocks = async (req, res) => {
   try {
     const userId = req.user?.id;
 
-    if (!userId) {
-      return res.status(401).json({ message: 'User not authenticated' });
-    }
-
     const blocks = await prisma.block.findMany({
       where: { blockerId: userId },
       include: {
@@ -39,10 +35,6 @@ export const blockUser = [
   async (req, res) => {
     const { blockedId } = req.body;
     const userId = req.user?.id;
-
-    if (!userId) {
-      return res.status(401).json({ message: 'User not authenticated' });
-    }
 
     if (userId === blockedId) {
       return res.status(400).json({ message: 'Cannot block yourself' });
@@ -112,10 +104,6 @@ export const unblockUser = [
   async (req, res) => {
     const { id } = req.params;
     const userId = req.user?.id;
-
-    if (!userId) {
-      return res.status(401).json({ message: 'User not authenticated' });
-    }
 
     try {
       const block = await prisma.block.findFirst({

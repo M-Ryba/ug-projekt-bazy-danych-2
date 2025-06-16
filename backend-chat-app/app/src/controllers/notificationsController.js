@@ -30,10 +30,6 @@ export const getNotifications = [
     try {
       const userId = req.user?.id;
 
-      if (!userId) {
-        return res.status(401).json({ message: 'User not authenticated' });
-      }
-
       const { page = 1, limit = 20, isRead, type } = req.query;
       const skip = (page - 1) * limit;
 
@@ -74,10 +70,6 @@ export const getNotificationById = [
   async (req, res) => {
     const { id } = req.params;
     const userId = req.user?.id;
-
-    if (!userId) {
-      return res.status(401).json({ message: 'User not authenticated' });
-    }
 
     try {
       const notification = await prisma.notification.findFirst({
@@ -136,10 +128,6 @@ export const markAsRead = [
     const { notificationIds } = req.body;
     const userId = req.user?.id;
 
-    if (!userId) {
-      return res.status(401).json({ message: 'User not authenticated' });
-    }
-
     try {
       const result = await prisma.notification.updateMany({
         where: {
@@ -165,10 +153,6 @@ export const markAsRead = [
 export const markAllAsRead = async (req, res) => {
   try {
     const userId = req.user?.id;
-
-    if (!userId) {
-      return res.status(401).json({ message: 'User not authenticated' });
-    }
 
     const result = await prisma.notification.updateMany({
       where: {
@@ -196,10 +180,6 @@ export const deleteNotification = [
     const { id } = req.params;
     const userId = req.user?.id;
 
-    if (!userId) {
-      return res.status(401).json({ message: 'User not authenticated' });
-    }
-
     try {
       const notification = await prisma.notification.findFirst({
         where: {
@@ -226,10 +206,6 @@ export const deleteNotification = [
 export const getUnreadCount = async (req, res) => {
   try {
     const userId = req.user?.id;
-
-    if (!userId) {
-      return res.status(401).json({ message: 'User not authenticated' });
-    }
 
     const count = await prisma.notification.count({
       where: {

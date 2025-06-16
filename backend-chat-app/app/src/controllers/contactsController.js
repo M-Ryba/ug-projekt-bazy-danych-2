@@ -2,21 +2,11 @@ import prisma from '../../prisma/client.js';
 import { body, param } from 'express-validator';
 import handleValidationErrors from '../middleware/handleValidationErrors.js';
 
-// Validation middleware
 const validateContactId = [param('id').isInt({ min: 1 }).withMessage('Contact ID must be a positive integer')];
-
-const validateContactCreate = [
-  body('contactId').isInt({ min: 1 }).withMessage('Contact ID must be a positive integer'),
-  body('isFavorite').optional().isBoolean().withMessage('isFavorite must be a boolean')
-];
 
 export const getContacts = async (req, res) => {
   try {
-    const userId = req.user?.id; // Assuming user is added to req by auth middleware
-
-    if (!userId) {
-      return res.status(401).json({ message: 'User not authenticated' });
-    }
+    const userId = req.user?.id;
 
     const contacts = await prisma.contact.findMany({
       where: { ownerId: userId },
@@ -40,30 +30,18 @@ export const getContacts = async (req, res) => {
 };
 
 export const addContact = [
-  ...validateContactCreate,
+  body('contactId').isInt({ min: 1 }).withMessage('Contact ID must be a positive integer'),
+  body('isFavorite').optional().isBoolean().withMessage('isFavorite must be a boolean'),
   handleValidationErrors,
   async (req, res) => {
     const { contactId, isFavorite = false } = req.body;
     const userId = req.user?.id;
-
-    if (!userId) {
-      return res.status(401).json({ message: 'User not authenticated' });
-    }
 
     if (userId === contactId) {
       return res.status(400).json({ message: 'Cannot add yourself as a contact' });
     }
 
     try {
-      // Check if contact user exists
-      const contactUser = await prisma.user.findUnique({
-        where: { id: contactId }
-      });
-
-      if (!contactUser) {
-        return res.status(404).json({ message: 'Contact user not found' });
-      }
-
       // Check if contact already exists
       const existingContact = await prisma.contact.findUnique({
         where: {
@@ -113,10 +91,6 @@ export const updateContact = [
     const { isFavorite } = req.body;
     const userId = req.user?.id;
 
-    if (!userId) {
-      return res.status(401).json({ message: 'User not authenticated' });
-    }
-
     try {
       const contact = await prisma.contact.findFirst({
         where: {
@@ -158,10 +132,6 @@ export const deleteContact = [
   async (req, res) => {
     const { id } = req.params;
     const userId = req.user?.id;
-
-    if (!userId) {
-      return res.status(401).json({ message: 'User not authenticated' });
-    }
 
     try {
       const contact = await prisma.contact.findFirst({

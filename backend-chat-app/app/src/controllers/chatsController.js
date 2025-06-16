@@ -27,10 +27,6 @@ export const getChats = async (req, res) => {
   try {
     const userId = req.user?.id;
 
-    if (!userId) {
-      return res.status(401).json({ message: 'User not authenticated' });
-    }
-
     const chats = await prisma.chat.findMany({
       where: {
         members: {
@@ -73,10 +69,6 @@ export const getChatById = [
   async (req, res) => {
     const { id } = req.params;
     const userId = req.user?.id;
-
-    if (!userId) {
-      return res.status(401).json({ message: 'User not authenticated' });
-    }
 
     try {
       const chat = await prisma.chat.findFirst({
@@ -126,10 +118,6 @@ export const createChat = [
   async (req, res) => {
     const { type, name, description, memberIds } = req.body;
     const userId = req.user?.id;
-
-    if (!userId) {
-      return res.status(401).json({ message: 'User not authenticated' });
-    }
 
     if (type === 'PRIVATE' && memberIds.length !== 1) {
       return res.status(400).json({ message: 'Private chat must have exactly one other member' });
@@ -212,10 +200,6 @@ export const updateChat = [
     const { name, description } = req.body;
     const userId = req.user?.id;
 
-    if (!userId) {
-      return res.status(401).json({ message: 'User not authenticated' });
-    }
-
     try {
       const chat = await prisma.chat.findFirst({
         where: {
@@ -281,10 +265,6 @@ export const deleteChat = [
     const { id } = req.params;
     const userId = req.user?.id;
 
-    if (!userId) {
-      return res.status(401).json({ message: 'User not authenticated' });
-    }
-
     try {
       const chat = await prisma.chat.findFirst({
         where: {
@@ -316,10 +296,6 @@ export const addMembers = [
     const { id } = req.params;
     const { userIds } = req.body;
     const userId = req.user?.id;
-
-    if (!userId) {
-      return res.status(401).json({ message: 'User not authenticated' });
-    }
 
     try {
       const chat = await prisma.chat.findFirst({
@@ -395,10 +371,6 @@ export const removeMember = [
     const { id, memberId } = req.params;
     const userId = req.user?.id;
 
-    if (!userId) {
-      return res.status(401).json({ message: 'User not authenticated' });
-    }
-
     try {
       const chat = await prisma.chat.findFirst({
         where: {
@@ -449,10 +421,6 @@ export const leaveChat = [
   async (req, res) => {
     const { id } = req.params;
     const userId = req.user?.id;
-
-    if (!userId) {
-      return res.status(401).json({ message: 'User not authenticated' });
-    }
 
     try {
       const member = await prisma.chatMember.findFirst({
