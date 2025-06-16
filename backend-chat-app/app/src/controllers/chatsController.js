@@ -2,7 +2,6 @@ import prisma from '../../prisma/client.js';
 import { body, param } from 'express-validator';
 import handleValidationErrors from '../middleware/handleValidationErrors.js';
 
-// Validation middleware
 const validateChatId = [param('id').isInt({ min: 1 }).withMessage('Chat ID must be a positive integer')];
 
 const validateChatCreate = [
