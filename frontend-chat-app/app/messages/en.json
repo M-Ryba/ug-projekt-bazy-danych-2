@@ -13,5 +13,13 @@
 	"username": "Username",
 	"logout": "Logout",
 	"username_requirements": "Must be 3 to 30 characters (letters, numbers or dash)",
-	"password_requirements": "Must be more than 8 characters, including at least one number, one lowercase letter and one uppercase letter"
+	"password_requirements": "Must be more than 8 characters, including at least one number, one lowercase letter and one uppercase letter",
+	"edited": "edited",
+	"chat_room": "Chat Room",
+	"save": "Save",
+	"cancel": "Cancel",
+	"edit": "Edit",
+	"delete": "Delete",
+	"send": "Send",
+	"message_box_placeholder": "Type a message..."
 }
