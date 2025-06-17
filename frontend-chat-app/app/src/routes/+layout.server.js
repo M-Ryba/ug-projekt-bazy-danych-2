@@ -1,4 +1,4 @@
-import { BACKEND_URL } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 
 export async function load(event) {
 	const session = await event.locals.auth();
@@ -6,7 +6,7 @@ export async function load(event) {
 	let user = null;
 	if (session?.access_token) {
 		try {
-			const res = await event.fetch(`${BACKEND_URL}/api/users/me`, {
+			const res = await event.fetch(`${env.BACKEND_URL}/api/users/me`, {
 				method: 'GET',
 				headers: {
 					Authorization: `Bearer ${session.access_token}`

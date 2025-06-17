@@ -11,5 +11,8 @@ export default defineConfig({
 			project: './project.inlang',
 			outdir: './src/lib/paraglide'
 		})
-	]
+	],
+	preview: {
+		host: '0.0.0.0'
+	}
 });

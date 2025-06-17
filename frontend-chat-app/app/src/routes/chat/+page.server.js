@@ -1,7 +1,7 @@
-import { BACKEND_URL } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 
 export async function load() {
 	return {
-		wsUrl: BACKEND_URL
+		wsUrl: env.BACKEND_URL
 	};
 }
