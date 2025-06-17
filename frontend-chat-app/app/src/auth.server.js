@@ -1,16 +1,15 @@
 import { SvelteKitAuth } from '@auth/sveltekit';
 import Keycloak from '@auth/sveltekit/providers/keycloak';
 import { jwtDecode } from 'jwt-decode';
-import { KEYCLOAK_CLIENT_ID, KEYCLOAK_CLIENT_SECRET, KEYCLOAK_ISSUER } from '$env/static/private';
-
+import { env } from '$env/dynamic/private';
 async function refreshKeycloakToken(refresh_token) {
 	const params = new URLSearchParams();
 	params.append('grant_type', 'refresh_token');
-	params.append('client_id', KEYCLOAK_CLIENT_ID);
-	params.append('client_secret', KEYCLOAK_CLIENT_SECRET);
+	params.append('client_id', env.KEYCLOAK_CLIENT_ID);
+	params.append('client_secret', env.KEYCLOAK_CLIENT_SECRET);
 	params.append('refresh_token', refresh_token);
 
-	const response = await fetch(`${KEYCLOAK_ISSUER}/protocol/openid-connect/token`, {
+	const response = await fetch(`${env.KEYCLOAK_ISSUER}/protocol/openid-connect/token`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 		body: params
@@ -22,9 +21,9 @@ async function refreshKeycloakToken(refresh_token) {
 export const { handle, signIn, signOut } = SvelteKitAuth({
 	providers: [
 		Keycloak({
-			clientId: KEYCLOAK_CLIENT_ID,
-			clientSecret: KEYCLOAK_CLIENT_SECRET,
-			issuer: KEYCLOAK_ISSUER,
+			clientId: env.KEYCLOAK_CLIENT_ID,
+			clientSecret: env.KEYCLOAK_CLIENT_SECRET,
+			issuer: env.KEYCLOAK_ISSUER,
 			authorization: {
 				params: {
 					prompt: 'login'

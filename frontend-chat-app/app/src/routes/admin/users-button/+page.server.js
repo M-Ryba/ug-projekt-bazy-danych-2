@@ -1,10 +1,10 @@
-import { BACKEND_URL } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 
 export const actions = {
 	getUsers: async ({ locals }) => {
 		const session = await locals.auth();
 
-		const fetchUsers = await fetch(`${BACKEND_URL}/api/admin/users`, {
+		const fetchUsers = await fetch(`${env.BACKEND_URL}/api/admin/users`, {
 			method: 'GET',
 			headers: {
 				Authorization: `Bearer ${session.access_token}`

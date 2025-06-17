@@ -68,7 +68,8 @@ services:
             - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_PASSWORD}
             - KC_HTTP_PORT=8082
         ports:
-            - 8092:8082
+            - 8082:8082
+        hostname: keycloak
         volumes:
             - keycloak_data:/opt/keycloak/data
             - ./chatapp-realm.json:/opt/keycloak/data/import/chatapp-realm.json
@@ -76,42 +77,43 @@ services:
             - chatapp
         command: ["start-dev", "--import-realm"]
 
-    # backend:
-    #     build: ./backend-chat-app
-    #     container_name: chatapp_backend
-    #     depends_on:
-    #         - postgres
-    #         - mongo
-    #     restart: always
-    #     environment:
-    #         - PORT=${BACKEND_PORT}
-    #         - FRONTEND_URL=${FRONTEND_URL}
-    #         - POSTGRES_URI="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_URL}"
-    #         - MONGO_URI="mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_URL}"
-    #         - KEYCLOAK_ISSUER=${KEYCLOAK_ISSUER}
-    #         - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
-    #         - AUTH_SECRET=${AUTH_SECRET}
-    #     ports:
-    #         - 8093:8083
-    #     networks:
-    #         - chatapp
+    backend:
+        build: ./backend-chat-app
+        container_name: chatapp_backend
+        depends_on:
+            - postgres
+            - mongo
+        restart: always
+        environment:
+            - PORT=${BACKEND_PORT}
+            - FRONTEND_URL=${FRONTEND_URL}
+            - POSTGRES_URI=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_URL}
+            - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_URL}
+            - KEYCLOAK_ISSUER=${KEYCLOAK_ISSUER}
+            - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
+            - AUTH_SECRET=${AUTH_SECRET}
+        ports:
+            - 8083:8083
+        hostname: backend
+        networks:
+            - chatapp
 
-    # frontend:
-    #     build: ./frontend-chat-app
-    #     container_name: chatapp_frotend
-    #     depends_on:
-    #         - backend
-    #     restart: always
-    #     environment:
-    #         - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET}
-    #         - BACKEND_URL=${BACKEND_URL}
-    #         - KEYCLOAK_ISSUER=${KEYCLOAK_ISSUER}
-    #         - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
-    #         - AUTH_SECRET=${AUTH_SECRET}
-    #     ports:
-    #         - 80:4173
-    #     networks:
-    #         - chatapp
+    frontend:
+        build: ./frontend-chat-app
+        container_name: chatapp_frotend
+        depends_on:
+            - backend
+        restart: always
+        environment:
+            - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET}
+            - BACKEND_URL=${BACKEND_URL}
+            - KEYCLOAK_ISSUER=${KEYCLOAK_ISSUER}
+            - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
+            - AUTH_SECRET=${AUTH_SECRET}
+        ports:
+            - 5173:5173
+        networks:
+            - chatapp
 
 networks:
     chatapp:
