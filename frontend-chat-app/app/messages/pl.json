@@ -22,5 +22,6 @@
 	"delete": "Usuń",
 	"send": "Wyślij",
 	"message_box_placeholder": "Napisz wiadomość...",
-	"you": "Ty"
+	"you": "Ty",
+	"message_deleted": "Wiadomość usunięta"
 }

@@ -80,7 +80,7 @@
 					{/if}
 				</div>
 				{#if msg.isDeleted}
-					<div class="italic text-gray-400">()</div>
+					<div class="italic text-gray-400">({m.message_deleted()})</div>
 				{:else if editingId === msg._id}
 					<input class="input input-bordered w-full" bind:value={editContent} />
 					<button class="btn btn-success btn-xs ml-2" onclick={() => saveEdit(msg)}>{m.save()}</button>
