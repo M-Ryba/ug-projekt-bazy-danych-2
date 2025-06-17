@@ -1,45 +1,66 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    kompose.cmd: kompose convert -f docker-compose.yml -o k8s/
-    kompose.version: 1.36.0 (ae2a39403)
-  labels:
-    io.kompose.service: backend
-  name: backend
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      io.kompose.service: backend
-  template:
-    metadata:
-      annotations:
+    annotations:
         kompose.cmd: kompose convert -f docker-compose.yml -o k8s/
         kompose.version: 1.36.0 (ae2a39403)
-      labels:
+    labels:
         io.kompose.service: backend
-    spec:
-      containers:
-        - env:
-            - name: AUTH_SECRET
-              value: 52f887d9ae44b5691c5ea0a09563fe7e
-            - name: FRONTEND_URL
-              value: http://frontend:5173
-            - name: KEYCLOAK_CLIENT_ID
-              value: frontend
-            - name: KEYCLOAK_ISSUER
-              value: http://keycloak:8082/realms/chatapp
-            - name: MONGO_URI
-              value: mongodb://mongo:mongo@mongo:27017
-            - name: PORT
-              value: "8083"
-            - name: POSTGRES_URI
-              value: postgresql://postgres:postgres@postgres:5432/chatapp?schema=public
-          image: backend
-          name: chatapp-backend
-          ports:
-            - containerPort: 8083
-              protocol: TCP
-      hostname: backend
-      restartPolicy: Always
+    name: backend
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            io.kompose.service: backend
+    template:
+        metadata:
+            annotations:
+                kompose.cmd: kompose convert -f docker-compose.yml -o k8s/
+                kompose.version: 1.36.0 (ae2a39403)
+            labels:
+                io.kompose.service: backend
+        spec:
+            containers:
+                - env:
+                      - name: FRONTEND_URL
+                        valueFrom:
+                            configMapKeyRef:
+                                name: chatapp-config
+                                key: FRONTEND_URL
+                      - name: KEYCLOAK_CLIENT_ID
+                        valueFrom:
+                            configMapKeyRef:
+                                name: chatapp-config
+                                key: KEYCLOAK_CLIENT_ID
+                      - name: KEYCLOAK_ISSUER
+                        valueFrom:
+                            configMapKeyRef:
+                                name: chatapp-config
+                                key: KEYCLOAK_ISSUER
+                      - name: PORT
+                        valueFrom:
+                            configMapKeyRef:
+                                name: chatapp-config
+                                key: PORT
+                      - name: AUTH_SECRET
+                        valueFrom:
+                            secretKeyRef:
+                                name: chatapp-secret
+                                key: AUTH_SECRET
+                      - name: MONGO_URI
+                        valueFrom:
+                            secretKeyRef:
+                                name: chatapp-secret
+                                key: MONGO_URI
+                      - name: POSTGRES_URI
+                        valueFrom:
+                            secretKeyRef:
+                                name: chatapp-secret
+                                key: POSTGRES_URI
+                  image: backend
+                  name: chatapp-backend
+                  ports:
+                      - containerPort: 8083
+                        protocol: TCP
+            hostname: backend
+            restartPolicy: Always
