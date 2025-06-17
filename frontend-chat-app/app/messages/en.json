@@ -21,5 +21,6 @@
 	"edit": "Edit",
 	"delete": "Delete",
 	"send": "Send",
-	"message_box_placeholder": "Type a message..."
+	"message_box_placeholder": "Type a message...",
+	"you": "You"
 }
