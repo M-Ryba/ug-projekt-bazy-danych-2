@@ -1,124 +1,124 @@
 services:
-    postgres:
-        image: postgres:17.5
-        container_name: chatapp_postgres
-        restart: always
-        shm_size: 128mb
-        environment:
-            - POSTGRES_USER=${POSTGRES_USER}
-            - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-            - POSTGRES_DB=chatapp
-        ports:
-            - "5432:5432"
-        volumes:
-            - postgres_data:/var/lib/postgresql/data
-        networks:
-            - chatapp
-    mongo:
-        image: mongo:8.0.9
-        container_name: chatapp_mongodb
-        restart: always
-        shm_size: 512mb
-        environment:
-            - MONGO_INITDB_ROOT_USERNAME=${MONGO_USER}
-            - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
-        ports:
-            - "27017:27017"
-        volumes:
-            - mongodb_data:/data/db
-        networks:
-            - chatapp
+  postgres:
+    image: postgres:17.5
+    container_name: chatapp_postgres
+    restart: always
+    shm_size: 128mb
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=chatapp
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - chatapp
+  mongo:
+    image: mongo:8.0.9
+    container_name: chatapp_mongodb
+    restart: always
+    shm_size: 512mb
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - chatapp
 
-    adminer:
-        image: adminer:5.3.0
-        container_name: chatapp_adminer
-        depends_on:
-            - postgres
-        restart: unless-stopped
-        environment:
-            - ADMINER_DEFAULT_SERVER=postgres
-        ports:
-            - 8090:8080
-        networks:
-            - chatapp
+  adminer:
+    image: adminer:5.3.0
+    container_name: chatapp_adminer
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    environment:
+      - ADMINER_DEFAULT_SERVER=postgres
+    ports:
+      - 8090:8080
+    networks:
+      - chatapp
 
-    mongo-express:
-        image: mongo-express
-        container_name: chatapp_mongo-express
-        depends_on:
-            - mongo
-        restart: unless-stopped
-        ports:
-            - 8091:8081
-        environment:
-            - ME_CONFIG_MONGODB_ADMINUSERNAME=${MONGO_USER}
-            - ME_CONFIG_MONGODB_ADMINPASSWORD=${MONGO_PASSWORD}
-            - ME_CONFIG_MONGODB_SERVER=mongo
-            - ME_CONFIG_MONGODB_PORT=27017
-            - ME_CONFIG_BASICAUTH=false
-        networks:
-            - chatapp
+  mongo-express:
+    image: mongo-express
+    container_name: chatapp_mongo-express
+    depends_on:
+      - mongo
+    restart: unless-stopped
+    ports:
+      - 8091:8081
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=${MONGO_USER}
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=${MONGO_PASSWORD}
+      - ME_CONFIG_MONGODB_SERVER=mongo
+      - ME_CONFIG_MONGODB_PORT=27017
+      - ME_CONFIG_BASICAUTH=false
+    networks:
+      - chatapp
 
-    keycloak:
-        image: keycloak/keycloak:26.2
-        container_name: chatapp_keycloak
-        restart: always
-        environment:
-            - KEYCLOAK_ADMIN=${KEYCLOAK_USER}
-            - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_PASSWORD}
-            - KC_HTTP_PORT=8082
-        ports:
-            - 8092:8082
-        volumes:
-            - keycloak_data:/opt/keycloak/data
-            - ./chatapp-realm.json:/opt/keycloak/data/import/chatapp-realm.json
-        networks:
-            - chatapp
-        command: ["start-dev", "--import-realm"]
+  keycloak:
+    image: keycloak/keycloak:26.2
+    container_name: chatapp_keycloak
+    restart: always
+    environment:
+      - KEYCLOAK_ADMIN=${KEYCLOAK_USER}
+      - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_PASSWORD}
+      - KC_HTTP_PORT=8082
+    ports:
+      - 8092:8082
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+      - ./chatapp-realm.json:/opt/keycloak/data/import/chatapp-realm.json
+    networks:
+      - chatapp
+    command: ["start-dev", "--import-realm"]
 
-    # backend:
-    #     build: ./backend-chat-app
-    #     container_name: chatapp_backend
-    #     depends_on:
-    #         - postgres
-    #         - mongo
-    #     restart: always
-    #     environment:
-    #         - PORT=${BACKEND_PORT}
-    #         - FRONTEND_URL=${FRONTEND_URL}
-    #         - POSTGRES_URI="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_URL}"
-    #         - MONGO_URI="mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_URL}"
-    #         - KEYCLOAK_ISSUER=${KEYCLOAK_ISSUER}
-    #         - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
-    #         - AUTH_SECRET=${AUTH_SECRET}
-    #     ports:
-    #         - 8093:8083
-    #     networks:
-    #         - chatapp
+  backend:
+    build: ./backend-chat-app
+    container_name: chatapp_backend
+    depends_on:
+      - postgres
+      - mongo
+    restart: always
+    environment:
+      - PORT=${BACKEND_PORT}
+      - FRONTEND_URL=${FRONTEND_URL}
+      - POSTGRES_URI="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_URL}"
+      - MONGO_URI="mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_URL}"
+      - KEYCLOAK_ISSUER=${KEYCLOAK_ISSUER}
+      - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
+      - AUTH_SECRET=${AUTH_SECRET}
+    ports:
+      - 8093:8083
+    networks:
+      - chatapp
 
-    # frontend:
-    #     build: ./frontend-chat-app
-    #     container_name: chatapp_frotend
-    #     depends_on:
-    #         - backend
-    #     restart: always
-    #     environment:
-    #         - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET}
-    #         - BACKEND_URL=${BACKEND_URL}
-    #         - KEYCLOAK_ISSUER=${KEYCLOAK_ISSUER}
-    #         - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
-    #         - AUTH_SECRET=${AUTH_SECRET}
-    #     ports:
-    #         - 80:4173
-    #     networks:
-    #         - chatapp
+  frontend:
+    build: ./frontend-chat-app
+    container_name: chatapp_frotend
+    depends_on:
+      - backend
+    restart: always
+    environment:
+      - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET}
+      - BACKEND_URL=${BACKEND_URL}
+      - KEYCLOAK_ISSUER=${KEYCLOAK_ISSUER}
+      - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
+      - AUTH_SECRET=${AUTH_SECRET}
+    ports:
+      - 80:4173
+    networks:
+      - chatapp
 
 networks:
-    chatapp:
-        external: false
-        name: chatapp
+  chatapp:
+    external: false
+    name: chatapp
 
 volumes:
-    postgres_data:
-    mongodb_data:
-    keycloak_data:
+  postgres_data:
+  mongodb_data:
+  keycloak_data:
