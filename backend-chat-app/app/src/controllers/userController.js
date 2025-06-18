@@ -98,7 +98,8 @@ export const updateUser = [
   ...validateUserUpdate,
   handleValidationErrors,
   async (req, res, next) => {
-    const { username } = req.params;
+    const { id } = req.params;
+    const numericId = Number(id);
     const { displayName, avatarUrl, showStatus, allowInvites, searchable } = req.body;
     const updateData = {};
     if (displayName !== undefined) updateData.displayName = displayName;
@@ -108,7 +109,7 @@ export const updateUser = [
     if (searchable !== undefined) updateData.searchable = searchable;
     try {
       const updatedUser = await prisma.user.update({
-        where: { username },
+        where: { id: numericId },
         data: updateData
       });
 

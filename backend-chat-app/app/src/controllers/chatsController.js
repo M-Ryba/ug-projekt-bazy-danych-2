@@ -9,7 +9,7 @@ const validateChatCreate = [
   body('name').optional().isLength({ min: 1, max: 100 }).withMessage('Name must be between 1 and 100 characters'),
   body('description').optional().isLength({ max: 500 }).withMessage('Description must be max 500 characters'),
   body('memberIds').isArray({ min: 1 }).withMessage('Member IDs must be an array with at least one member'),
-  body('memberIds.*').isInt({ min: 1 }).withMessage('Each member ID must be a positive integer')
+  body('memberIds.*').toInt().isInt({ min: 1 }).withMessage('Each member ID must be a positive integer')
 ];
 
 const validateChatUpdate = [
