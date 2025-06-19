@@ -49,6 +49,13 @@ spec:
                   ports:
                       - containerPort: 8082
                         protocol: TCP
+                  resources:
+                      requests:
+                          cpu: "200m"
+                          memory: "256Mi"
+                      limits:
+                          cpu: "1"
+                          memory: "1Gi"
                   volumeMounts:
                       - mountPath: /opt/keycloak/data
                         name: keycloak-data
