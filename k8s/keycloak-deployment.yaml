@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yml -o k8s/
+    kompose.version: 1.36.0 (ae2a39403)
+  labels:
+    io.kompose.service: keycloak
+  name: keycloak
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: keycloak
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f docker-compose.yml -o k8s/
+        kompose.version: 1.36.0 (ae2a39403)
+      labels:
+        io.kompose.service: keycloak
+    spec:
+      containers:
+        - args:
+            - start-dev
+            - --import-realm
+          env:
+            - name: KC_HTTP_PORT
+              value: "8082"
+            - name: KEYCLOAK_ADMIN
+              value: keycloak
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              value: keycloak
+          image: keycloak/keycloak:26.2
+          name: chatapp-keycloak
+          ports:
+            - containerPort: 8082
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /opt/keycloak/data
+              name: keycloak-data
+            - mountPath: /opt/keycloak/data/import/chatapp-realm.json
+              name: keycloak-cm1
+              subPath: chatapp-realm.json
+      hostname: keycloak
+      restartPolicy: Always
+      volumes:
+        - name: keycloak-data
+          persistentVolumeClaim:
+            claimName: keycloak-data
+        - configMap:
+            items:
+              - key: chatapp-realm.json
+                path: chatapp-realm.json
+            name: keycloak-cm1
+          name: keycloak-cm1

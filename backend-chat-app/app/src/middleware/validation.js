@@ -16,4 +16,4 @@ export const validateUsername = [
     .withMessage('Username can only contain letters, numbers, and underscores')
 ];
 
-export const validateUserId = [param('userId').isInt({ min: 1 }).withMessage('User ID must be a positive integer')];
+export const validateUserId = [param('id').toInt().isInt({ min: 1 }).withMessage('User ID must be a positive integer')];

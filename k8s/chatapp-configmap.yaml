@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: chatapp-config
+    namespace: default
+
+data:
+    FRONTEND_URL: "http://frontend:5173"
+    BACKEND_URL: "http://backend:8083"
+    KEYCLOAK_CLIENT_ID: "frontend"
+    KEYCLOAK_ISSUER: "http://keycloak:8082/realms/chatapp"
+    PORT: "8083"
+    POSTGRES_DB: "chatapp"
+    POSTGRES_USER: "postgres"
+    MONGO_INITDB_ROOT_USERNAME: "mongo"
