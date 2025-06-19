@@ -1,10 +1,8 @@
 # Node
 **/node_modules
-
 # Sveltekit
 /build
 /.svelte-kit
-
-# env files
-#.env
-#.env.*
+#env files
+.env
+.env.*
