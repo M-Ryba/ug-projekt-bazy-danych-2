@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: app-config
+
+data:
+    # Backend & Frontend
+    KEYCLOAK_CLIENT_ID: "frontend"
+    KEYCLOAK_ISSUER: "http://keycloak:8082/realms/chatapp"
+    # Backend
+    FRONTEND_URL: "http://frontend:5173"
+    PORT: "8083"
+    # Frontend
+    BACKEND_URL: "http://backend:8083"
+    # Keycloak
+    KC_HTTP_PORT: "8082"
+    # Postgres
+    POSTGRES_DB: "chatapp"
+    # Mongo-express
+    ME_CONFIG_BASICAUTH: "false"
+    ME_CONFIG_MONGODB_PORT: "27017"
+    ME_CONFIG_MONGODB_SERVER: "mongo"
+    # Adminer
+    ADMINER_DEFAULT_SERVER: "postgres"

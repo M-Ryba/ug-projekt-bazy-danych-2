@@ -28,18 +28,30 @@ spec:
                                 name: app-secrets
                                 key: AUTH_SECRET
                       - name: FRONTEND_URL
-                        value: http://frontend:5173
+                        valueFrom:
+                            configMapKeyRef:
+                                name: app-config
+                                key: FRONTEND_URL
                       - name: KEYCLOAK_CLIENT_ID
-                        value: frontend
+                        valueFrom:
+                            configMapKeyRef:
+                                name: app-config
+                                key: KEYCLOAK_CLIENT_ID
                       - name: KEYCLOAK_ISSUER
-                        value: http://keycloak:8082/realms/chatapp
+                        valueFrom:
+                            configMapKeyRef:
+                                name: app-config
+                                key: KEYCLOAK_ISSUER
                       - name: MONGO_URI
                         valueFrom:
                             secretKeyRef:
                                 name: app-secrets
                                 key: MONGO_URI
                       - name: PORT
-                        value: "8083"
+                        valueFrom:
+                            configMapKeyRef:
+                                name: app-config
+                                key: PORT
                       - name: POSTGRES_URI
                         valueFrom:
                             secretKeyRef:

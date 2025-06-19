@@ -28,9 +28,15 @@ spec:
                       - --import-realm
                   env:
                       - name: KC_HTTP_PORT
-                        value: "8082"
+                        valueFrom:
+                            configMapKeyRef:
+                                name: app-config
+                                key: KC_HTTP_PORT
                       - name: KEYCLOAK_ADMIN
-                        value: keycloak
+                        valueFrom:
+                            secretKeyRef:
+                                name: app-secrets
+                                key: KEYCLOAK_ADMIN
                       - name: KEYCLOAK_ADMIN_PASSWORD
                         value: keycloak
                       - name: KEYCLOAK_CLIENT_SECRET

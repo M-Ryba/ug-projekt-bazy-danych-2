@@ -25,7 +25,10 @@ spec:
             containers:
                 - env:
                       - name: POSTGRES_DB
-                        value: chatapp
+                        valueFrom:
+                            configMapKeyRef:
+                                name: app-config
+                                key: POSTGRES_DB
                       - name: POSTGRES_PASSWORD
                         valueFrom:
                             secretKeyRef:
