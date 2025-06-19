@@ -3,5 +3,5 @@ kind: StorageClass
 metadata:
     name: db
 provisioner: k8s.io/minikube-hostpath
-volumeBindingMode: WaitForFirstConsumer
+volumeBindingMode: Immediate
 reclaimPolicy: Retain
