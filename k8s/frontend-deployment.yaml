@@ -48,6 +48,7 @@ spec:
                                 name: app-config
                                 key: KEYCLOAK_ISSUER
                   image: frontend
+                  imagePullPolicy: Never
                   name: chatapp-frotend
                   ports:
                       - containerPort: 5173

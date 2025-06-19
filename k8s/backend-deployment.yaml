@@ -58,6 +58,7 @@ spec:
                                 name: app-secrets
                                 key: POSTGRES_URI
                   image: backend
+                  imagePullPolicy: Never
                   name: chatapp-backend
                   ports:
                       - containerPort: 8083
