@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
     annotations:
-        kompose.cmd: kompose convert -f docker-compose.yml -o k8s/
+        kompose.cmd: kompose convert --out k8s
         kompose.version: 1.36.0 (ae2a39403)
     labels:
         io.kompose.service: postgres
@@ -17,7 +17,7 @@ spec:
     template:
         metadata:
             annotations:
-                kompose.cmd: kompose convert -f docker-compose.yml -o k8s/
+                kompose.cmd: kompose convert --out k8s
                 kompose.version: 1.36.0 (ae2a39403)
             labels:
                 io.kompose.service: postgres
@@ -25,20 +25,17 @@ spec:
             containers:
                 - env:
                       - name: POSTGRES_DB
-                        valueFrom:
-                            configMapKeyRef:
-                                name: chatapp-config
-                                key: POSTGRES_DB
-                      - name: POSTGRES_USER
-                        valueFrom:
-                            configMapKeyRef:
-                                name: chatapp-config
-                                key: POSTGRES_USER
+                        value: chatapp
                       - name: POSTGRES_PASSWORD
                         valueFrom:
                             secretKeyRef:
-                                name: chatapp-secret
+                                name: app-secrets
                                 key: POSTGRES_PASSWORD
+                      - name: POSTGRES_USER
+                        valueFrom:
+                            secretKeyRef:
+                                name: app-secrets
+                                key: POSTGRES_USER
                   image: postgres:17.5
                   name: chatapp-postgres
                   ports:

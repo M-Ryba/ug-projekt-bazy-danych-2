@@ -1,2 +1,4 @@
 docker compose down
 docker compose up -d --build
+
+kubectl apply -f k8s/
