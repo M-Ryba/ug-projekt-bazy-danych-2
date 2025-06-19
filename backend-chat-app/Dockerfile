@@ -1,6 +1,6 @@
 FROM node:22-alpine
 
-ADD ./app /usr/src/app
+COPY ./app /usr/src/app
 WORKDIR /usr/src/app
 
 RUN npm ci
